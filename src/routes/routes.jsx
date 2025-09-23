@@ -1,10 +1,12 @@
 import {
   Landing,
+  Login,
   NotFound,
 } from "@pages";
 import { createBrowserRouter } from "react-router-dom";
 import { UiDemo } from "@ui/index";
 import Room from "@/pages/Room";
+import Register from "@/pages/Register";
 
 const router = createBrowserRouter([
   // LANDING PAGE PER SERVICE
@@ -15,6 +17,14 @@ const router = createBrowserRouter([
   {
     path: "/room/:id",
     element: <Room />,
+  },
+  {
+    path: "/login",
+    element: <Login />,
+  },
+  {
+    path: "/register",
+    element: <Register />,
   },
   {
     path: "/test",

@@ -34,7 +34,7 @@ export default function FormTextField({
         fullWidth
         size={size}
         name={snakeCase(name)}
-        placeholder={`Enter ${lowerCase(name)}`}
+        placeholder={`${startCase(name)}`}
         label={shrink ? startCase(String(label || name)) : undefined}
         slotProps={{
           ...slotProps,

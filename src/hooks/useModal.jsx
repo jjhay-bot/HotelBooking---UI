@@ -31,7 +31,7 @@ export const useModal = (initialState = false) => {
 
   const closeModal = useCallback((_, reason) => {
     // prevent closing as need
-    if (["backdropClick", "escapeKeyDown"].includes(reason)) return;
+    // if (["backdropClick", "escapeKeyDown"].includes(reason)) return;
 
     setOpen(false);
   }, []);
