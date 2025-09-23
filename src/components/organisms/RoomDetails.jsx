@@ -157,7 +157,8 @@ export default function RoomDetails({ room }) {
                   Room #{room.roomNumber} • Floor {room.floor}
                 </Typography>
 
-                <Typography variant="h5" color="primary.main" fontWeight="bold">
+
+                <Typography variant="h5" color="primary.main" fontWeight="bold" textAlign='right'>
                   ${room.pricePerNight}/night
                 </Typography>
               </Box>

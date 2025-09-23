@@ -43,16 +43,17 @@ export default function GalleryDetails({ cards = [] }) {
               >
                 <Box
                   sx={{
-                    p: 2,
+                    p: 1.5,
                     background: `linear-gradient(to top, ${theme.palette.primary.main}dd, transparent)`,
                     color: theme.palette.primary.contrastText,
                   }}
                 >
                   <Typography
-                    variant="body1"
+                    variant="body2"
                     sx={{
-                      fontWeight: 600,
-                      textShadow: "0 1px 3px rgba(0,0,0,0.3)",
+                      fontWeight: 500,
+                      textShadow: '0 1px 3px rgba(0,0,0,0.3)',
+                      lineHeight: 1.4
                     }}
                   >
                     {activeCard.title}
@@ -92,7 +93,7 @@ export default function GalleryDetails({ cards = [] }) {
           <motion.div
             key={card.id}
             onClick={() => setActive(card.id)}
-            // whileHover={{ scale: 1.03 }}
+            whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.98 }}
             style={{
               minHeight: "calc(20%)",
@@ -104,7 +105,7 @@ export default function GalleryDetails({ cards = [] }) {
                 active === card.id
                   ? `2px solid ${theme.palette.primary.main}`
                   : "2px solid transparent",
-              aspectRatio: '5/3',
+              aspectRatio: 5/3,
             }}
           >
             <CardMedia
