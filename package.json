@@ -6,6 +6,7 @@
   "scripts": {
     "generate:constants": "node scripts/generateConstantsIndex.js",
     "generate:hooks-index": "node scripts/generateHooksIndex.js",
+    "generate:pages-index": "node scripts/generatePagesIndex.js",
     "predev": "npm run generate:constants && npm run generate:pages-index && npm run generate:hooks-index",
     "prebuild": "",
     "dev": "vite",
