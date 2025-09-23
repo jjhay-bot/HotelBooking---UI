@@ -29,9 +29,9 @@ const typography = {
   body2: { fontSize: "0.813rem", fontWeight: 400, lineHeight: "1.375rem" }, //
 
   caption: {
-    fontSize: "0.938rem",
+    fontSize: "0.65rem",
     fontWeight: 400,
-    letterSpacing: "0.75px",
+    letterSpacing: "0.25px",
     lineHeight: 1.5,
     color: color.mid,
   }, //
@@ -60,17 +60,24 @@ const typography = {
     fontWeight: 700,
     color: color.high,
     letterSpacing: "0.75px",
-  }, //
+  },
   error: {
     fontSize: "0.625rem",
     fontWeight: 400,
     letterSpacing: "0.25px",
-  }, //
+  },
   toast: {
     fontSize: "0.813rem",
     fontWeight: 600,
     letterSpacing: "0.25px",
     color: color.green,
-  }, //
+  },
+  logo: {
+    fontFamily: "Rammetto One",
+    fontSize: "1.125rem",
+    fontWeight: 400,
+    letterSpacing: "0.25px",
+    color: color.green,
+  },
 };
 export default typography;

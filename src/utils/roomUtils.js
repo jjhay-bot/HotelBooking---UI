@@ -34,7 +34,7 @@ export const getRoomStatusStyle = (status, theme) => {
 export const getRoomStatusText = (status) => {
   switch (status) {
     case 'available':
-      return 'View & Book Room';
+      return 'Book Now!';
     case 'occupied':
       return 'Currently Occupied';
     case 'maintenance':

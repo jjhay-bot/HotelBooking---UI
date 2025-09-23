@@ -3,29 +3,29 @@ import { motion } from "framer-motion";
 import { Box, Card, CardMedia, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 
-const MotionBox = motion(Box);
+export const MotionBox = motion(Box);
 
-export default function MuiCardGallery({ cards = [] }) {
+export default function Gallery({ cards = [] }) {
   const [active, setActive] = useState(1);
   const theme = useTheme();
 
   return (
-    <Box display="flex" gap={0.75} height='100%'>
+    <Box display="flex" gap={0.75} height='100%' >
       {cards.map((card) => (
         <MotionBox
           key={card.id}
           onClick={() => setActive(card.id)}
           animate={{ flex: active === card.id ? 3 : 1 }}
-          transition={{ duration: 0.5, ease: "easeInOut" }}
+          transition={{ duration: 0.3, ease: "easeInOut" }}
+          whileHover={{ scale: 1.03 }}
           sx={{
             display: "flex",
             borderRadius: active === card.id ? 6 : 6,
-            overflow: "hidden"
+            overflow: 'clip',
           }}
         >
           <Card
             sx={{
-              borderRadius: active === card.id ? 6 : 6,
               width: "100%",
               height: "100%", // always inherit from parent
               position: "relative",

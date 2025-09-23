@@ -5,14 +5,17 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import PeopleIcon from '@mui/icons-material/People';
 import { useTheme } from "@mui/material/styles";
 import { getRoomStatusStyle, getRoomStatusText, isRoomBookable } from "@/utils/roomUtils";
-
+import BookmarkIcon from '@mui/icons-material/Bookmark';
+import LocalHotelRoundedIcon from '@mui/icons-material/LocalHotelRounded';
+import { useNavigate } from 'react-router-dom';
 export function FeaturedRooms() {
 
   const theme = useTheme();
+  const navigate = useNavigate()
 
   return (
     <Stack pt={2} >
-      <Typography variant='h3' py={2} >
+      <Typography variant='h3' py={1.5} >
         Featured Rooms
       </Typography>
 
@@ -20,8 +23,8 @@ export function FeaturedRooms() {
         {
           rooms?.map((r, ind) =>
             <Grid key={ind} size={{ xs: 12, sm: 6, md: 4, lg: 4 }}>
-              <Card >
-                <CardContent>
+              <Card sx={{ borderRadius: 6 }}>
+                <CardContent sx={{ p: 1.25 }}>
                   <Stack spacing={1} alignItems='center' sx={{ aspectRatio: 3 / 2 }} >
                     <Gallery cards={r.gallery} />
                   </Stack>
@@ -63,10 +66,11 @@ export function FeaturedRooms() {
 
                     <Button
                       variant={isRoomBookable(r.status) ? 'contained' : 'outlined'}
-                      startIcon={<VisibilityIcon />}
+                      startIcon={<LocalHotelRoundedIcon fontSize="8px" />}
                       fullWidth
                       disabled={!isRoomBookable(r.status)}
-                      sx={{ mt: 2 }}
+                      sx={{ mt: 2, }}
+                      onClick={() => navigate(`/room/${r.id}`)}
                     >
                       {getRoomStatusText(r.status)}
                     </Button>

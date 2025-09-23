@@ -3,7 +3,7 @@ import { color } from "@constants";
 const palette = {
   mode: "light",
   primary: {
-    main: "#ED5A29",
+    main: "#706b3b",
     contrastText: "#fff",
   },
   secondary: {

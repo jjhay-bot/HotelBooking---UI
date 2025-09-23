@@ -37,14 +37,14 @@ const MuiButton = {
     // },
     sizeSmall: {
       fontSize: "0.813rem",
-      padding: "6px 12px",
-      borderRadius: "8px",
-      border: "2px solid #ED5A29",
+      padding: "10px 12px",
+      borderRadius: "10px",
+      // border: "2px solid #ED5A29",
       fontWeight: 600,
     },
     sizeMedium: {
       fontSize: "0.813rem",
-      padding: "9px 24px",
+      padding: "12px 24px",
       borderRadius: "8px",
       fontWeight: 600,
     },

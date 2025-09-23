@@ -32,7 +32,7 @@ const Screen = ({
   footer,
   title,
   backAction,
-  noHeader = false,
+  noHeader = true,
   ...props
 }) => {
   const { pathname } = useLocation();

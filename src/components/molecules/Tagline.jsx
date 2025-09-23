@@ -17,7 +17,7 @@ export default ({ taglines }) => {
   const startTimer = useCallback(() => {
     timerRef.current = setInterval(() => {
       slider.current?.next();
-    }, 3000);
+    }, 3500);
   }, [slider]);
 
   useEffect(() => {
@@ -33,15 +33,16 @@ export default ({ taglines }) => {
       {
         taglines.map((tagline, index) => (
           <Typography
-            variant="h4"
+            variant="h6"
             className="keen-slider__slide"
             key={index}
             sx={{
-              textAlign: 'center',
-              fontSize: { sm: '1.5rem' },
+              // textAlign: 'center',
+              // fontSize: { sm: '1.5rem' },
               fontWeight: 700,
               lineHeight: 1.3,
-              letterSpacing: '-0.01em'
+              letterSpacing: '-0.01em',
+              color: '#706b3b89',
             }}
           >
             {tagline}

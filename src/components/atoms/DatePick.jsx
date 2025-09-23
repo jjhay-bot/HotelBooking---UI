@@ -19,6 +19,8 @@ const DatePick = ({
           value={value}
           onChange={onChange}
           disabled={disabled}
+          clearable={true}  // 👈 enables clear button
+          closeOnSelect={true}  // 👈 closes modal when date is selected
           enableAccessibleFieldDOMStructure={false}   // 👈 fixes the error
           slots={{
             textField: TextField, // ✅ just reference the component

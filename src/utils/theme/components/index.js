@@ -6,6 +6,7 @@ import MuiAlert from "@utils/theme/components/MuiAlert";
 import MuiListItemButton from "@utils/theme/components/MuiListItemButton";
 import MuiPaper from "@utils/theme/components/MuiPaper";
 import MuiTextField from "@utils/theme/components/MuiTextField";
+import MuiSelect from "@utils/theme/components/MuiSelect";
 import MuiOutlinedInput from "./MuiOutlinedInput";
 // import MuiTypography from "@utils/theme/components/MuiTypography";
 
@@ -14,6 +15,7 @@ const components = {
   MuiAlert,
   MuiListItemButton,
   MuiTextField,
+  MuiSelect,
   MuiOutlinedInput,
   // MuiTypography,
   // MuiCheckbox,

@@ -18,7 +18,7 @@ const DefaultHeader = ({ title = "", backAction = true }) => {
       }}
     >
       <Grid sx={{ display: backAction ? "block" : "none", px: 1 }}>
-        <IconButton size="small" onClick={goBack}>
+        <IconButton size="small" onClick={goBack} color="primary">
           <BackIcon />
         </IconButton>
       </Grid>

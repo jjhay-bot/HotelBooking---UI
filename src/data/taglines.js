@@ -3,7 +3,6 @@ export const taglines = [
   "Better rest, cheaper nest. 🛏️",
   "Rest your head, not your bread.",
   "Save the cash, skip the stash.",
-  "Snore for more, pay less than before.",
   "Dreams on fleek, prices cheap.",
   "Nap happy, spend snappy.",
   "Rest easy, pay breezy.",
