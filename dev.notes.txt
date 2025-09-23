@@ -1,0 +1,15 @@
+src/
+├── App.jsx✅
+├── index.css✅
+├── main.jsx✅
+├── assets✅
+├── data
+│   └── api✅
+│   └── services✅
+├── components✅
+├── hooks✅
+├── pages✅
+├── routes✅
+└── constants✅
+└── utils✅
+└── store
