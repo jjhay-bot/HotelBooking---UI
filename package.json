@@ -5,7 +5,6 @@
   "type": "module",
   "scripts": {
     "generate:constants": "node scripts/generateConstantsIndex.js",
-    "generate:pages-index": "node scripts/generatePagesIndex.js",
     "generate:hooks-index": "node scripts/generateHooksIndex.js",
     "predev": "npm run generate:constants && npm run generate:pages-index && npm run generate:hooks-index",
     "prebuild": "",

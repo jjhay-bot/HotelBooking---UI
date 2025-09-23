@@ -4,18 +4,14 @@ import { taglines } from "@/data/taglines";
 import { initLoadingVar } from "@/gql/reactiveVar";
 import { useReactiveVar } from "@apollo/client";
 import Screen from "@components/atoms/Screen";
-import { Button, Card, CardContent, FormControl, Grid, MenuItem, Select, Stack, Typography, Chip, Box } from "@mui/material";
-import { useState } from 'react';
-import DatePick from "@/components/atoms/DatePick";
-import FormTextField from "@/components/atoms/FormTextField";
-import { roomTypes } from "@/data/roomTypes";
-import TravelExploreRoundedIcon from '@mui/icons-material/TravelExploreRounded';
+import { Button, Card, CardContent, Grid, Stack, Typography, Chip, Box } from "@mui/material";
 import { rooms } from "@/data/rooms";
 import Gallery from "@/components/molecules/Gallery";
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import PeopleIcon from '@mui/icons-material/People';
 import { useTheme } from "@mui/material/styles";
 import { getRoomStatusStyle, getRoomStatusText, isRoomBookable } from "@/utils/roomUtils";
+import { FilterForm } from "../components/organisms/FilterForm";
 
 export function Landing() {
   const initLoading = useReactiveVar(initLoadingVar);
@@ -26,7 +22,6 @@ export function Landing() {
 }
 
 const LandingPage = () => {
-  const [selectedDate, setSelectedDate] = useState(null);
   const theme = useTheme();
 
   return (
@@ -36,71 +31,7 @@ const LandingPage = () => {
           <Tagline taglines={taglines} />
         </Stack>
 
-        <Card>
-          <CardContent >
-            <Grid container rowSpacing={1.5} columnSpacing={2} >
-
-              <Grid size={{ xs: 12, sm: 4, lg: 3 }}>
-                <DatePick
-                  label="Check-in Date"
-                  value={selectedDate}
-                  onChange={(newValue) => setSelectedDate(newValue)}
-                />
-              </Grid>
-
-              <Grid size={{ xs: 12, sm: 4, lg: 3 }}>
-                <DatePick
-                  label="Check-out Date"
-                  value={selectedDate}
-                  onChange={(newValue) => setSelectedDate(newValue)}
-                />
-              </Grid>
-
-              <Grid size={{ xs: 12, sm: 4, lg: 3 }}>
-                <FormTextField
-                  required
-                  name="guests"
-                  type="number"
-                // onChange={handleChange}
-                // errors={errors}
-                // value={formData?.home_details || ""}
-                />
-              </Grid>
-
-              <Grid size={{ xs: 12, sm: 4, lg: 3 }}>
-                <FormControl fullWidth variant="filled" size="small">
-                  <Typography variant="label">Room Type</Typography>
-                  <Select
-                    size="medium"
-                    labelId="fruit-label"
-                    variant='outlined'
-                  // value={fruit}
-                  // onChange={(e) => setFruit(e.target.value)}
-                  >
-                    {roomTypes.map((opt) => (
-                      <MenuItem key={opt.value} value={opt.value}>
-                        {opt.label}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Grid>
-
-              <Grid size={{ xs: 12, sm: 4, lg: 3 }} pt={1} alignItems='end' container justifyItems='center' >
-                <Button
-                  fullWidth
-                  size="large"
-                  variant="contained"
-                  startIcon={<TravelExploreRoundedIcon />}
-                >
-                  Search
-                </Button>
-              </Grid>
-            </Grid>
-          </CardContent>
-
-
-        </Card>
+        <FilterForm />
 
         <Stack pt={2} >
           <Typography variant='h3' py={2} >
