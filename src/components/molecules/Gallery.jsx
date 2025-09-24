@@ -1,20 +1,41 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import { Box, Card, CardMedia, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
+import { useAutoAnimate } from "@/hooks/useAutoAnimate";
 
 export const MotionBox = motion(Box);
 
-export default function Gallery({ cards = [] }) {
+export default function Gallery({ cards = [], anime = false }) {
   const [active, setActive] = useState(1);
   const theme = useTheme();
+
+  // Memoize the step function to avoid unnecessary effect reruns
+  const step = useCallback(() => {
+    setActive(prevActive => {
+      const currentIndex = cards.findIndex(card => card.id === prevActive);
+      const nextIndex = (currentIndex + 1) % cards.length;
+      return cards[nextIndex]?.id || cards[0]?.id;
+    });
+  }, [cards]);
+
+  const { stop } = useAutoAnimate({
+    enabled: anime,
+    length: cards.length,
+    onStep: step
+  });
+
+  const handleCardClick = (cardId) => {
+    setActive(cardId);
+    stop(); // Stop auto-animation
+  };
 
   return (
     <Box display="flex" gap={0.75} height='100%' >
       {cards.map((card) => (
         <MotionBox
           key={card.id}
-          onClick={() => setActive(card.id)}
+          onClick={() => handleCardClick(card.id)}
           animate={{ flex: active === card.id ? 3 : 1 }}
           transition={{ duration: 0.3, ease: "easeInOut" }}
           whileHover={{ scale: 1.03 }}

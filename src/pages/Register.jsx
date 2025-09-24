@@ -112,7 +112,7 @@ export default function Register() {
                     animate={{ scale: 1 }}
                     transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
                   >
-                    <PersonAddIcon sx={{ fontSize: 42, color: 'primary.main', mb: 2 }} />
+                    <PersonAddIcon sx={{ fontSize: 36, color: 'primary.main', mb: 2 }} />
                   </motion.div>
                   <Typography variant="h4" gutterBottom>
                     Create Account

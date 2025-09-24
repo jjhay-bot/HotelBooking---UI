@@ -77,7 +77,7 @@ export default function Login() {
                     animate={{ scale: 1 }}
                     transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
                   >
-                    <PersonIcon sx={{ fontSize: 42, color: 'primary.main', mb: 2 }} />
+                    <PersonIcon sx={{ fontSize: 36, color: 'primary.main', mb: 2 }} />
                   </motion.div>
                   <Typography variant="h3" gutterBottom>
                     Welcome Back

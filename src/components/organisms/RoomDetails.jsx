@@ -35,15 +35,33 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import StarIcon from '@mui/icons-material/Star';
 import PlaceIcon from '@mui/icons-material/Place';
 import { useModal } from "@/hooks";
+import { useNavigate } from 'react-router-dom';
+import { useEffect } from "react";
 
 export default function RoomDetails({ room }) {
   const theme = useTheme();
   const modal = useModal()
+  const navigate = useNavigate();
 
   const onBookNow = () => {
     // console.log(`Booking room: ${room.roomType}`);
     modal.openModal()
   }
+
+  const onConfirmBooking = () => {
+    navigate('/login');
+  }
+
+  useEffect(() => {
+    if (modal.open) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [modal.open]);
 
   if (!room) {
     return (
@@ -372,131 +390,164 @@ export default function RoomDetails({ room }) {
       </Card >
 
       <Dialog open={modal.open} onClose={modal.closeModal} maxWidth="sm" fullWidth>
-        <Stack p={{ xs: 1.25, md: 2.5 }} spacing={3}>
+        <Stack
+          p={0}
+          spacing={0}
+          sx={{ height: { xs: '90vh', md: 600 }, maxHeight: '98vh', display: 'flex' }}
+        >
           {/* Header */}
-          <Box>
+          <Box
+            sx={{
+              p: { xs: 1.25, md: 2.5 },
+              borderBottom: 1,
+              borderColor: 'divider',
+              position: 'sticky',
+              top: 0,
+              zIndex: 2,
+              bgcolor: 'background.paper',
+              flexShrink: 0,
+            }}
+          >
             <Typography variant="h5" fontWeight="bold" gutterBottom>
               Booking Summary
             </Typography>
             <Typography variant="body2" color="text.secondary">
               Review your reservation details before confirming
             </Typography>
-
-            <Divider sx={{ mt: 1 }} />
           </Box>
 
-
-          {/* Room Information */}
-          <Box>
-            <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <BedIcon fontSize="small" color="primary" />
-              Room Details
-            </Typography>
-            <Paper sx={{ p: 2, bgcolor: 'grey.50', borderRadius: 2 }}>
-              <Grid container spacing={2}>
-                <Grid size={8}>
-                  <Typography variant="subtitle1" fontWeight="600">
-                    {room.roomType}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Room #{room.roomNumber} • Floor {room.floor}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {room.bedType} • Up to {room.capacity} guests • {room.size}
-                  </Typography>
+          {/* Scrollable Content */}
+          <Box
+            sx={{
+              flex: 1,
+              overflowY: 'auto',
+              p: { xs: 1.25, md: 2.5 },
+              bgcolor: 'background.paper',
+            }}
+          >
+            {/* Room Information */}
+            <Box>
+              <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <BedIcon fontSize="small" color="primary" />
+                Room Details
+              </Typography>
+              <Paper sx={{ p: 2, bgcolor: 'grey.50', borderRadius: 2 }}>
+                <Grid container spacing={2}>
+                  <Grid size={8}>
+                    <Typography variant="subtitle1" fontWeight="600">
+                      {room.roomType}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      Room #{room.roomNumber} • Floor {room.floor}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {room.bedType} • Up to {room.capacity} guests • {room.size}
+                    </Typography>
+                  </Grid>
+                  <Grid size={4} sx={{ textAlign: 'right' }}>
+                    <Typography variant="h6" color="primary.main" fontWeight="bold">
+                      ${room.pricePerNight}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      per night
+                    </Typography>
+                  </Grid>
                 </Grid>
-                <Grid size={4} sx={{ textAlign: 'right' }}>
-                  <Typography variant="h6" color="primary.main" fontWeight="bold">
-                    ${room.pricePerNight}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    per night
-                  </Typography>
+              </Paper>
+            </Box>
+            {/* Booking Dates */}
+            <Box>
+              <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <AccessTimeIcon fontSize="small" color="primary" />
+                Stay Duration
+              </Typography>
+              <Paper sx={{ p: 2, bgcolor: 'grey.50', borderRadius: 2 }}>
+                <Grid container spacing={2}>
+                  <Grid size={6}>
+                    <Typography variant="body2" color="text.secondary">
+                      Check-in
+                    </Typography>
+                    <Typography variant="subtitle1" fontWeight="600">
+                      Dec 24, 2024
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      3:00 PM
+                    </Typography>
+                  </Grid>
+                  <Grid size={6}>
+                    <Typography variant="body2" color="text.secondary">
+                      Check-out
+                    </Typography>
+                    <Typography variant="subtitle1" fontWeight="600">
+                      Dec 27, 2024
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      11:00 AM
+                    </Typography>
+                  </Grid>
                 </Grid>
-              </Grid>
-            </Paper>
-          </Box>
-
-          {/* Booking Dates */}
-          <Box>
-            <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <AccessTimeIcon fontSize="small" color="primary" />
-              Stay Duration
-            </Typography>
-            <Paper sx={{ p: 2, bgcolor: 'grey.50', borderRadius: 2 }}>
-              <Grid container spacing={2}>
-                <Grid size={6}>
-                  <Typography variant="body2" color="text.secondary">
-                    Check-in
-                  </Typography>
-                  <Typography variant="subtitle1" fontWeight="600">
-                    Dec 24, 2024
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    3:00 PM
-                  </Typography>
-                </Grid>
-                <Grid size={6}>
-                  <Typography variant="body2" color="text.secondary">
-                    Check-out
-                  </Typography>
-                  <Typography variant="subtitle1" fontWeight="600">
-                    Dec 27, 2024
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    11:00 AM
-                  </Typography>
-                </Grid>
-              </Grid>
-            </Paper>
-          </Box>
-
-          {/* Price Breakdown */}
-          <Box>
-            <Typography variant="h6" gutterBottom>
-              Price Breakdown
-            </Typography>
-            <Paper sx={{ p: 2, bgcolor: 'grey.50', borderRadius: 2 }}>
-              <Stack spacing={1}>
-                <Box display="flex" justifyContent="space-between">
-                  <Typography variant="body2">
-                    ${room.pricePerNight} × 3 nights
-                  </Typography>
-                  <Typography variant="body2">
-                    ${room.pricePerNight * 3}
-                  </Typography>
-                </Box>
-                <Box display="flex" justifyContent="space-between">
-                  <Typography variant="body2">
-                    Service fee
-                  </Typography>
-                  <Typography variant="body2">
-                    $25
-                  </Typography>
-                </Box>
-                <Box display="flex" justifyContent="space-between">
-                  <Typography variant="body2">
-                    Taxes
-                  </Typography>
-                  <Typography variant="body2">
-                    ${Math.round((room.pricePerNight * 3 + 25) * 0.12)}
-                  </Typography>
-                </Box>
-                <Divider />
-                <Box display="flex" justifyContent="space-between">
-                  <Typography variant="subtitle1" fontWeight="bold">
-                    Total
-                  </Typography>
-                  <Typography variant="subtitle1" fontWeight="bold" color="primary.main">
-                    ${Math.round((room.pricePerNight * 3 + 25) * 1.12)}
-                  </Typography>
-                </Box>
-              </Stack>
-            </Paper>
+              </Paper>
+            </Box>
+            {/* Price Breakdown */}
+            <Box>
+              <Typography variant="h6" gutterBottom>
+                Price Breakdown
+              </Typography>
+              <Paper sx={{ p: 2, bgcolor: 'grey.50', borderRadius: 2 }}>
+                <Stack spacing={1}>
+                  <Box display="flex" justifyContent="space-between">
+                    <Typography variant="body2">
+                      ${room.pricePerNight} × 3 nights
+                    </Typography>
+                    <Typography variant="body2">
+                      ${room.pricePerNight * 3}
+                    </Typography>
+                  </Box>
+                  <Box display="flex" justifyContent="space-between">
+                    <Typography variant="body2">
+                      Service fee
+                    </Typography>
+                    <Typography variant="body2">
+                      $25
+                    </Typography>
+                  </Box>
+                  <Box display="flex" justifyContent="space-between">
+                    <Typography variant="body2">
+                      Taxes
+                    </Typography>
+                    <Typography variant="body2">
+                      ${Math.round((room.pricePerNight * 3 + 25) * 0.12)}
+                    </Typography>
+                  </Box>
+                  <Divider />
+                  <Box display="flex" justifyContent="space-between">
+                    <Typography variant="subtitle1" fontWeight="bold">
+                      Total
+                    </Typography>
+                    <Typography variant="subtitle1" fontWeight="bold" color="primary.main">
+                      ${Math.round((room.pricePerNight * 3 + 25) * 1.12)}
+                    </Typography>
+                  </Box>
+                </Stack>
+              </Paper>
+            </Box>
           </Box>
 
           {/* Action Buttons */}
-          <Grid container spacing={2}>
+          <Grid
+            container
+            spacing={2}
+            sx={{
+              p: { xs: 1.25, md: 2.5 },
+              borderTop: 1,
+              borderColor: 'divider',
+              position: 'sticky',
+              bottom: 0,
+              zIndex: 2,
+              bgcolor: 'background.paper',
+              flexShrink: 0,
+            }}
+          >
             <Grid size={6}>
               <Button
                 variant="outlined"
@@ -506,13 +557,14 @@ export default function RoomDetails({ room }) {
                 Cancel
               </Button>
             </Grid>
-
             <Grid size={6}>
               <Button
-                variant="contained"
                 fullWidth
+                variant="contained"
+                onClick={onConfirmBooking}
               >
-                Confirm Booking
+                Confirm
+                <Box component='span' pl={1} sx={{ display: { xs: 'none', sm: 'block' } }} >Booking</Box>
               </Button>
             </Grid>
           </Grid>

@@ -1,17 +1,18 @@
 import { Button, Card, CardContent, Grid, Stack, Typography, Chip, Box } from "@mui/material";
 import { rooms } from "@/data/rooms";
 import Gallery from "@/components/molecules/Gallery";
-import VisibilityIcon from '@mui/icons-material/Visibility';
 import PeopleIcon from '@mui/icons-material/People';
 import { useTheme } from "@mui/material/styles";
 import { getRoomStatusStyle, getRoomStatusText, isRoomBookable } from "@/utils/roomUtils";
-import BookmarkIcon from '@mui/icons-material/Bookmark';
 import LocalHotelRoundedIcon from '@mui/icons-material/LocalHotelRounded';
 import { useNavigate } from 'react-router-dom';
+import { useState } from "react";
+
 export function FeaturedRooms() {
 
   const theme = useTheme();
   const navigate = useNavigate()
+  const [activeIndex, setActiveIndex] = useState(null);
 
   return (
     <Stack pt={2} >
@@ -23,10 +24,16 @@ export function FeaturedRooms() {
         {
           rooms?.map((r, ind) =>
             <Grid key={ind} size={{ xs: 12, sm: 6, md: 4, lg: 4 }}>
-              <Card sx={{ borderRadius: 6 }}>
+              <Card
+                sx={{ borderRadius: 6 }}
+                tabIndex={0}
+                onClick={() => setActiveIndex(ind)}
+                onTouchStart={() => setActiveIndex(ind)}
+                onFocus={() => setActiveIndex(ind)}
+              >
                 <CardContent sx={{ p: 1.25 }}>
                   <Stack spacing={1} alignItems='center' sx={{ aspectRatio: 3 / 2 }} >
-                    <Gallery cards={r.gallery} />
+                    <Gallery cards={r.gallery} anime={activeIndex === ind} />
                   </Stack>
 
                   <Stack spacing={2} pt={2}>
