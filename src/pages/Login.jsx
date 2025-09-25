@@ -1,4 +1,3 @@
-
 import { Button, Card, CardContent, Grid, Typography, IconButton, InputAdornment } from "@mui/material";
 import { useState } from 'react';
 import { motion } from "framer-motion";
@@ -9,6 +8,7 @@ import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import PersonIcon from '@mui/icons-material/Person';
 import LockIcon from '@mui/icons-material/Lock';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from "@/hooks/useAuth";
 
 export default function Login() {
   const [formData, setFormData] = useState({
@@ -18,6 +18,7 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
 
+  const { login } = useAuth();
   const navigate = useNavigate()
 
   const handleInputChange = (field) => (event) => {
@@ -34,7 +35,7 @@ export default function Login() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = {};
 
@@ -55,8 +56,8 @@ export default function Login() {
       return;
     }
 
-    // Handle successful login here
-    console.log('Login submitted:', formData);
+    // Call login and navigate based on role
+    await login(formData);
   };
 
   return (

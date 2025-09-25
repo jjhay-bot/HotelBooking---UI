@@ -1,3 +1,4 @@
+export { default as AdminDashboard } from './AdminDashboard';
 export { Landing } from './Landing';
 export { default as Login } from './Login';
 export { default as NotFound } from './NotFound';

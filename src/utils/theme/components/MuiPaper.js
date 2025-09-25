@@ -1,9 +1,11 @@
+import { color } from "@/constants";
+
 // theme/components/MuiPaper.js
 const MuiPaper = {
   defaultProps: {
     elevation: 1,
     square: false,
-    variant: "elevation", // 'elevation' | 'outlined'
+    variant: "outlined", // 'elevation' | 'outlined'
   },
   styleOverrides: {
     root: {
@@ -17,7 +19,8 @@ const MuiPaper = {
       borderRadius: 16,
     },
     outlined: {
-      border: "1px dashed #90caf9",
+      border: `1px solid`,
+      borderColor: '#706b3b99',
     },
     // elevation0: {
     //   boxShadow: "none",

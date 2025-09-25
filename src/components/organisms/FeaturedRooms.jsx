@@ -15,8 +15,8 @@ export function FeaturedRooms() {
   const [activeIndex, setActiveIndex] = useState(null);
 
   return (
-    <Stack pt={2} >
-      <Typography variant='h3' py={1.5} >
+    <Stack>
+      <Typography variant='h3' pb={1.5} >
         Featured Rooms
       </Typography>
 

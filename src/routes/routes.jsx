@@ -7,6 +7,8 @@ import { createBrowserRouter } from "react-router-dom";
 import { UiDemo } from "@ui/index";
 import Room from "@/pages/Room";
 import Register from "@/pages/Register";
+import AdminDashboard from "@/pages/AdminDashboard.jsx";
+import ContactUs from "@/pages/ContactUs";
 
 const router = createBrowserRouter([
   // LANDING PAGE PER SERVICE
@@ -25,6 +27,15 @@ const router = createBrowserRouter([
   {
     path: "/register",
     element: <Register />,
+  },
+  {
+    path: "/contact",
+    element: <ContactUs />,
+  },
+  // ADMIN DASHBOARD
+  {
+    path: "/admin/dashboard",
+    element: <AdminDashboard />,
   },
   {
     path: "/test",

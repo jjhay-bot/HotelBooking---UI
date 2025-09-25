@@ -8,6 +8,8 @@ import MuiPaper from "@utils/theme/components/MuiPaper";
 import MuiTextField from "@utils/theme/components/MuiTextField";
 import MuiSelect from "@utils/theme/components/MuiSelect";
 import MuiOutlinedInput from "./MuiOutlinedInput";
+import MuiTabs from "@utils/theme/components/MuiTabs";
+import MuiTab from "@utils/theme/components/MuiTab";
 // import MuiTypography from "@utils/theme/components/MuiTypography";
 
 const components = {
@@ -29,8 +31,8 @@ const components = {
   MuiCard,
   MuiPaper,
   MuiBackdrop,
-  // MuiTabs,
-  // MuiTab,
+  MuiTabs,
+  MuiTab,
   // MuiDrawer
   MuiAutocomplete,
   MuiStack: {

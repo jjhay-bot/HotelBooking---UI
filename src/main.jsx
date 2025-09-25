@@ -6,6 +6,7 @@ import { Notification } from "@components/atoms/Notification";
 import { ApolloProvider } from "@apollo/client";
 import { client } from "@gql/client";
 import Spinner from "@components/atoms/Spinner";
+import QuickActions from "./components/molecules/QuickActions";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   // <React.StrictMode>

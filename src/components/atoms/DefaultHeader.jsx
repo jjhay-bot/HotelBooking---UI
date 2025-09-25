@@ -1,26 +1,37 @@
-import { Grid, Typography, IconButton } from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import { BackIcon } from "@assets/Icons";
+import { Grid, Typography, Divider } from "@mui/material";
+import Tagline from "../molecules/Tagline";
+import { taglines } from "@/data/taglines";
+import QuickActions from "../molecules/QuickActions";
 
 const DefaultHeader = ({ title = "", backAction = true }) => {
-  const navigate = useNavigate();
-
-  const goBack = () => {
-    navigate(-1);
-  };
-
   return (
     <Grid
       container
       sx={{
-        height: "56px",
         alignItems: "center",
       }}
     >
-      <Grid sx={{ display: backAction ? "block" : "none", px: 1 }}>
-        <IconButton size="small" onClick={goBack} color="primary">
-          <BackIcon />
-        </IconButton>
+      <Grid sx={{ display: backAction ? "block" : "none", px: 1, pt: 3 }}>
+        <Divider color="#706b3b" sx={{ my: "1px" }} />
+        <Divider color="#706b3b" sx={{ my: "1px" }} />
+
+        <Grid container alignItems="center" justifyContent="space-between" spacing={0.5}>
+          <Grid size="grow">
+            <Typography variant="logo" color="#706b3b">
+              Bedder Deals
+              <Grid container>
+                <Tagline taglines={taglines} />
+              </Grid>
+            </Typography>
+          </Grid>
+
+          <Grid>
+            <QuickActions />
+          </Grid>
+        </Grid>
+
+        <Divider color="#706b3b" sx={{ my: "1px" }} />
+        <Divider color="#706b3b" sx={{ my: "1px" }} />
       </Grid>
 
       <Grid px={1}>

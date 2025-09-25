@@ -1,30 +1,39 @@
-import { Button, Card, CardContent, FormControl, Grid, IconButton, MenuItem, Select, Typography } from "@mui/material";
-import { useState } from 'react';
+import {
+  Button,
+  Card,
+  CardContent,
+  FormControl,
+  Grid,
+  IconButton,
+  MenuItem,
+  Select,
+  Typography,
+} from "@mui/material";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import DatePick from "@/components/atoms/DatePick";
 import FormTextField from "@/components/atoms/FormTextField";
 import { roomTypes } from "@/data/roomTypes";
-import TravelExploreRoundedIcon from '@mui/icons-material/TravelExploreRounded';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import TravelExploreRoundedIcon from "@mui/icons-material/TravelExploreRounded";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 
 export const FilterForm = () => {
   const [selectedDate, setSelectedDate] = useState(null);
-  const [selectedRoomType, setSelectedRoomType] = useState('');
+  const [selectedRoomType, setSelectedRoomType] = useState("");
 
-  const [collapsed, setCollapsed] = useState(false)
+  const [collapsed, setCollapsed] = useState(false);
 
   return (
-    <AnimatePresence mode='popLayout'>
+    <AnimatePresence mode="popLayout" s>
       {collapsed ? (
         <motion.div
-          key='expanded'
+          key="expanded"
           initial={{ opacity: 0, height: 120 }}
           animate={{ opacity: 1, height: "auto" }}
           exit={{ opacity: 0, height: 120 }}
           transition={{ duration: 0.3, ease: "easeInOut" }}
-        // style={{ overflow: "hidden" }}
         >
-          <Card >
+          <Card>
             <CardContent>
               <Grid container rowSpacing={1.5} columnSpacing={2}>
                 {/* ...existing grid content... */}
@@ -45,11 +54,7 @@ export const FilterForm = () => {
                 </Grid>
 
                 <Grid size={{ xs: 12, sm: 4, lg: 3 }}>
-                  <FormTextField
-                    required
-                    name="guests"
-                    type="number"
-                  />
+                  <FormTextField required name="guests" type="number" />
                 </Grid>
 
                 <Grid size={{ xs: 12, sm: 4, lg: 3 }}>
@@ -68,17 +73,20 @@ export const FilterForm = () => {
                   </FormControl>
                 </Grid>
 
-                <Grid size={{ xs: 12, sm: 4, lg: 3 }} pt={1} alignItems='end' container justifyItems='center'>
+                <Grid
+                  size={{ xs: 12, sm: 4, lg: 3 }}
+                  pt={1}
+                  alignItems="end"
+                  container
+                  justifyItems="center"
+                >
                   <Grid container flex={1}>
-                    <Grid size="auto" sx={{ display: { sm: 'none' }, my: 'auto' }}>
-                      <motion.div
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                      >
+                    <Grid size="auto" sx={{ display: { sm: "none" }, my: "auto" }}>
+                      <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                         <IconButton
                           onClick={() => setCollapsed(false)}
                           color="primary"
-                          sx={{ border: '0.5px solid', p: 0.75, }}
+                          sx={{ border: "0.5px solid", p: 0.75 }}
                         >
                           <KeyboardArrowUpIcon sx={{ fontSize: "1.5rem" }} />
                         </IconButton>
@@ -86,10 +94,7 @@ export const FilterForm = () => {
                     </Grid>
 
                     <Grid flex={1}>
-                      <motion.div
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                      >
+                      <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                         <Button
                           fullWidth
                           width="100%"
@@ -100,6 +105,28 @@ export const FilterForm = () => {
                         >
                           Search
                         </Button>
+                      </motion.div>
+                    </Grid>
+                  </Grid>
+                </Grid>
+
+                <Grid size="grow" container>
+                  <Grid
+                    container
+                    flex={1}
+                    height="100%"
+                    justifyContent="end"
+                    alignItems="end"
+                  >
+                    <Grid size="auto" sx={{ display: { xs: "none", sm: "flex" }, my: 1 }}>
+                      <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                        <IconButton
+                          onClick={() => setCollapsed(false)}
+                          color="primary"
+                          sx={{ border: "0.5px solid", p: 0.75 }}
+                        >
+                          <KeyboardArrowUpIcon sx={{ fontSize: "1.5rem" }} />
+                        </IconButton>
                       </motion.div>
                     </Grid>
                   </Grid>
@@ -128,7 +155,7 @@ export const FilterForm = () => {
                 variant="outlined"
                 startIcon={<TravelExploreRoundedIcon />}
                 onClick={() => setCollapsed(true)}
-                sx={{ bgcolor: 'white' }}
+                sx={{ bgcolor: "white" }}
               >
                 Search
               </Button>

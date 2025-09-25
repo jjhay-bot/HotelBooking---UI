@@ -26,15 +26,7 @@ import { env } from "@constants";
  * @returns {JSX.Element}
  */
 
-const Screen = ({
-  children,
-  header,
-  footer,
-  title,
-  backAction,
-  noHeader = true,
-  ...props
-}) => {
+const Screen = ({ children, header, footer, title, backAction, ...props }) => {
   const { pathname } = useLocation();
 
   const [viewportHeight, setViewportHeight] = useState(window.innerHeight);
@@ -81,7 +73,7 @@ const Screen = ({
           bgcolor: isLandingPage ? "#EFF0F6" : "#fff",
         }}
       >
-        <Grid size="grow" sx={{ maxWidth: "1200px" }}>
+        <Grid size="grow" sx={{ maxWidth: "1200px", px: { xs: 2, md: 4 } }}>
           <Stack
             {...props}
             style={{
@@ -89,18 +81,17 @@ const Screen = ({
               height: viewportHeight,
             }}
           >
-            {!noHeader && (
-              <Stack flex={0} minHeight={56} justifyContent="center">
-                {/* HEADERS */}
-                {header ?? (
-                  <DefaultHeader
-                    title={title}
-                    {...backAction}
-                    isLandingPage={isLandingPage}
-                  />
-                )}
-              </Stack>
-            )}
+            <Stack flex={0} minHeight="fit-content" justifyContent="center">
+              {/* HEADERS */}
+
+              <DefaultHeader
+                title={title}
+                {...backAction}
+                isLandingPage={isLandingPage}
+              />
+
+              {header}
+            </Stack>
 
             <Stack
               flex={1}
@@ -110,6 +101,7 @@ const Screen = ({
                 maxWidth: "100%",
                 width: "100%",
                 bgcolor: isLandingPage ? "#EFF0F6" : "#fff",
+                pb: 2,
               }}
             >
               {/* CONTENTS */}
