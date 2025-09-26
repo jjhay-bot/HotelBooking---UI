@@ -31,9 +31,11 @@
     "keen-slider": "^6.8.6",
     "leaflet": "^1.9.4",
     "lodash": "^4.17.21",
+    "notistack": "^3.0.2",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-ga4": "^2.1.0",
+    "react-hot-toast": "^2.6.0",
     "react-leaflet": "^5.0.0",
     "react-router-dom": "^7.7.1",
     "react-webcam": "^7.2.0"

@@ -1,17 +1,15 @@
-import { alertVar } from "@gql/reactiveVar";
+import React from "react";
+import toast from "react-hot-toast";
+import { Notification } from "@components/atoms/Notification";
 import { map, startCase } from "lodash";
 
 // NOTIFICATION
 export const onError = (message) => {
-  alertVar({ message, type: "error" });
+  toast.custom((t) => React.createElement(Notification, { t, type: "error", message }));
 };
 
 export const onSuccess = (message) => {
-  alertVar({ message, type: "success" });
-};
-
-export const resetAlert = () => {
-  alertVar(null);
+  toast.custom((t) => React.createElement(Notification, { t, type: "success", message }));
 };
 
 export const updateStatus = (arr, id, newStatus) => {
