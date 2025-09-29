@@ -1,13 +1,14 @@
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { Stack, TextField, Typography } from '@mui/material';
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { Stack, TextField, Typography } from "@mui/material";
 
 const DatePick = ({
   label = "Select date",
   value,
   onChange,
   disabled = false,
+  slotProps,
   ...otherProps
 }) => {
   return (
@@ -19,9 +20,9 @@ const DatePick = ({
           value={value}
           onChange={onChange}
           disabled={disabled}
-          clearable={true}  // 👈 enables clear button
-          closeOnSelect={true}  // 👈 closes modal when date is selected
-          enableAccessibleFieldDOMStructure={false}   // 👈 fixes the error
+          clearable={true} // 👈 enables clear button
+          closeOnSelect={true} // 👈 closes modal when date is selected
+          enableAccessibleFieldDOMStructure={false} // 👈 fixes the error
           slots={{
             textField: TextField, // ✅ just reference the component
           }}
@@ -48,6 +49,7 @@ const DatePick = ({
             actionBar: {
               actions: [],
             },
+            ...slotProps,
           }}
           {...otherProps}
         />

@@ -12,54 +12,123 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-  Rating,
-  Paper,
   Dialog,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { motion } from "framer-motion";
 import GalleryDetails from "@/components/molecules/GalleryDetails";
 import { getRoomStatusStyle, getRoomStatusText, isRoomBookable } from "@/utils/roomUtils";
-import BookmarkIcon from '@mui/icons-material/Bookmark';
-import PeopleIcon from '@mui/icons-material/People';
-import BedIcon from '@mui/icons-material/Bed';
-import SquareFootIcon from '@mui/icons-material/SquareFoot';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import WifiIcon from '@mui/icons-material/Wifi';
-import LocalParkingIcon from '@mui/icons-material/LocalParking';
-import SmokeFreeIcon from '@mui/icons-material/SmokeFree';
-import PetsIcon from '@mui/icons-material/Pets';
-import CancelIcon from '@mui/icons-material/Cancel';
-import StarIcon from '@mui/icons-material/Star';
-import PlaceIcon from '@mui/icons-material/Place';
+import BookmarkIcon from "@mui/icons-material/Bookmark";
+import PeopleIcon from "@mui/icons-material/People";
+import BedIcon from "@mui/icons-material/Bed";
+import SquareFootIcon from "@mui/icons-material/SquareFoot";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { useModal } from "@/hooks";
-import { useNavigate } from 'react-router-dom';
-import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import HotelPolicies from "@/components/organisms/HotelPolicies";
+import RoomFeatures from "@/components/organisms/RoomFeatures";
+import BookingSummary from "@/components/organisms/BookingSummary";
+import GuestReviews from "@/components/organisms/GuestReviews";
+import LocationNearby from "@/components/organisms/LocationNearby";
+import { env } from "@/constants";
+import { onError, onSuccess } from "@/gql/uiActions";
+import { Login } from "@/pages";
 
 export default function RoomDetails({ room }) {
   const theme = useTheme();
-  const modal = useModal()
-  const navigate = useNavigate();
+  const modal = useModal();
+
+  // Booking state
+  const [checkIn, setCheckIn] = useState(null);
+  const [checkOut, setCheckOut] = useState(null);
+  const [notes, setNotes] = useState("");
+  const [errors, setErrors] = useState({});
+  const [apiError, setApiError] = useState("");
+  const [showLoginDialog, setShowLoginDialog] = useState(false);
+  // TODO: Replace with real user id and JWT from auth context
+  const userId = 1;
+  const JWT_TOKEN = sessionStorage.getItem("jwt");
+  // Calculate total price
+  let nights = 1;
+  if (checkIn && checkOut) {
+    nights = Math.max(1, Math.round((checkOut - checkIn) / (1000 * 60 * 60 * 24)));
+  }
+  const totalPrice = room ? (room.pricePerNight * nights + 5) * 1.12 : 0;
 
   const onBookNow = () => {
-    // console.log(`Booking room: ${room.roomType}`);
-    modal.openModal()
-  }
+    modal.openModal();
+  };
 
-  const onConfirmBooking = () => {
-    navigate('/login');
-  }
+  const onConfirmBooking = async () => {
+    let newErrors = {};
+    setApiError("");
+    // Validation
+    if (!checkIn) newErrors.checkIn = "Check-in date is required";
+    if (!checkOut) newErrors.checkOut = "Check-out date is required";
+
+    if (checkIn && checkOut && checkOut <= checkIn)
+      newErrors.checkOut = "Check-out must be after check-in";
+    setErrors(newErrors);
+    if (Object.keys(newErrors).length > 0) return;
+
+    const payload = {
+      userId,
+      roomId: room.id,
+      startDate: checkIn.toISOString(),
+      endDate: checkOut.toISOString(),
+      status: "Reserved",
+      totalPrice: Number(totalPrice.toFixed(2)),
+      notes,
+    };
+
+    try {
+      const res = await fetch(`${env.API_URI}/api/v1/bookings`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${JWT_TOKEN}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        let msg = "Booking failed";
+        if (res.status === 401) {
+          msg = "You are not authorized. Please log in again.";
+          setApiError(msg);
+          onError(msg);
+          setShowLoginDialog(true);
+          return;
+        }
+        try {
+          const data = await res.json();
+          if (data && data.message) msg = data.message;
+        } catch {
+          console.log("Failed to parse error response");
+        }
+        setApiError(msg);
+        onError(msg);
+        return;
+      }
+
+      onSuccess("Booking successful!");
+      modal.closeModal();
+    } catch (e) {
+      onError(e.message);
+    }
+  };
 
   useEffect(() => {
     if (modal.open) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     }
     return () => {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     };
   }, [modal.open]);
 
@@ -78,89 +147,27 @@ export default function RoomDetails({ room }) {
   return (
     <>
       <Card sx={{ borderRadius: 6, height: "100%" }}>
-        <CardContent sx={{ p: { xs: 1, md: 3 } }} >
+        <CardContent sx={{ p: { xs: 1, md: 3 } }}>
           <Grid container spacing={{ xs: 3, md: 4 }} height="100%">
             {/* Gallery Section */}
             <Grid size={{ xs: 12, md: 7 }}>
               <Stack spacing={3}>
                 {/* Main Gallery */}
-                <Stack spacing={1} alignItems='center' sx={{ aspectRatio: 4 / 2, maxWidth: '100%' }}  >
+                <Stack
+                  spacing={1}
+                  alignItems="center"
+                  sx={{ aspectRatio: 4 / 2, maxWidth: "100%" }}
+                >
                   <GalleryDetails cards={room.gallery} />
                 </Stack>
 
-                {/* Hotel Policies Card */}
-                <Card sx={{ borderRadius: 3, bgcolor: 'grey.50' }}>
-                  <CardContent sx={{ p: { xs: 1, md: 2 } }}>
-                    <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <AccessTimeIcon fontSize="small" color="primary" />
-                      Hotel Policies
-                    </Typography>
-                    <Grid container spacing={2}>
-                      <Grid size={6}>
-                        <Typography variant="body2" color="text.secondary">
-                          <strong>Check-in:</strong> 3:00 PM
-                        </Typography>
-                      </Grid>
-                      <Grid size={6}>
-                        <Typography variant="body2" color="text.secondary">
-                          <strong>Check-out:</strong> 11:00 AM
-                        </Typography>
-                      </Grid>
-                      <Grid size={6}>
-                        <Stack direction="row" spacing={1} alignItems="center">
-                          <SmokeFreeIcon fontSize="small" color="success" />
-                          <Typography variant="body2">Non-smoking</Typography>
-                        </Stack>
-                      </Grid>
-                      <Grid size={6}>
-                        <Stack direction="row" spacing={1} alignItems="center">
-                          <PetsIcon fontSize="small" color="primary" />
-                          <Typography variant="body2">Pet-friendly</Typography>
-                        </Stack>
-                      </Grid>
-                      <Grid size={12}>
-                        <Stack direction="row" spacing={1} alignItems="center">
-                          <CancelIcon fontSize="small" color="warning" />
-                          <Typography variant="body2">Free cancellation until 24h before</Typography>
-                        </Stack>
-                      </Grid>
-                    </Grid>
-                  </CardContent>
-                </Card>
+                <Stack display={{ xs: "none", md: "flex" }} spacing={3}>
+                  {/* Hotel Policies Card */}
+                  <HotelPolicies room={room} />
 
-                {/* Room Features Grid */}
-                <Card sx={{ borderRadius: 3, bgcolor: 'grey.50' }}>
-                  <CardContent sx={{ p: 2 }}>
-                    <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <WifiIcon fontSize="small" color="primary" />
-                      Room Features
-                    </Typography>
-                    <Grid container spacing={2}>
-                      <Grid size={6}>
-                        <Stack direction="row" spacing={1} alignItems="center">
-                          <WifiIcon fontSize="small" color="success" />
-                          <Typography variant="body2">High-speed WiFi</Typography>
-                        </Stack>
-                      </Grid>
-                      <Grid size={6}>
-                        <Stack direction="row" spacing={1} alignItems="center">
-                          <LocalParkingIcon fontSize="small" color="primary" />
-                          <Typography variant="body2">Free parking</Typography>
-                        </Stack>
-                      </Grid>
-                      <Grid size={6}>
-                        <Typography variant="body2" color="text.secondary">
-                          <strong>WiFi Speed:</strong> 100 Mbps
-                        </Typography>
-                      </Grid>
-                      <Grid size={6}>
-                        <Typography variant="body2" color="text.secondary">
-                          <strong>Room Service:</strong> 24/7
-                        </Typography>
-                      </Grid>
-                    </Grid>
-                  </CardContent>
-                </Card>
+                  {/* Room Features Grid */}
+                  <RoomFeatures room={room} />
+                </Stack>
               </Stack>
             </Grid>
 
@@ -169,7 +176,12 @@ export default function RoomDetails({ room }) {
               <Stack spacing={2} height="100%">
                 {/* Room Header */}
                 <Box>
-                  <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
+                  <Box
+                    display="flex"
+                    justifyContent="space-between"
+                    alignItems="center"
+                    mb={1}
+                  >
                     <Typography variant="h4" fontWeight="bold">
                       {room.roomType}
                     </Typography>
@@ -184,8 +196,12 @@ export default function RoomDetails({ room }) {
                     Room #{room.roomNumber} • Floor {room.floor}
                   </Typography>
 
-
-                  <Typography variant="h5" color="primary.main" fontWeight="bold" textAlign='right'>
+                  <Typography
+                    variant="h5"
+                    color="primary.main"
+                    fontWeight="bold"
+                    textAlign="right"
+                  >
                     ${room.pricePerNight}/night
                   </Typography>
                 </Box>
@@ -221,25 +237,19 @@ export default function RoomDetails({ room }) {
                     <Grid size={6}>
                       <Stack direction="row" spacing={1} alignItems="center">
                         <BedIcon fontSize="small" color="action" />
-                        <Typography variant="body2">
-                          {room.bedType}
-                        </Typography>
+                        <Typography variant="body2">{room.bedType}</Typography>
                       </Stack>
                     </Grid>
                     <Grid size={6}>
                       <Stack direction="row" spacing={1} alignItems="center">
                         <SquareFootIcon fontSize="small" color="action" />
-                        <Typography variant="body2">
-                          {room.size}
-                        </Typography>
+                        <Typography variant="body2">{room.size}</Typography>
                       </Stack>
                     </Grid>
                     <Grid size={6}>
                       <Stack direction="row" spacing={1} alignItems="center">
                         <LocationOnIcon fontSize="small" color="action" />
-                        <Typography variant="body2">
-                          Floor {room.floor}
-                        </Typography>
+                        <Typography variant="body2">Floor {room.floor}</Typography>
                       </Stack>
                     </Grid>
                   </Grid>
@@ -261,10 +271,7 @@ export default function RoomDetails({ room }) {
                             sx={{ color: theme.palette.success.main }}
                           />
                         </ListItemIcon>
-                        <ListItemText
-                          primary={amenity}
-                          primaryTypographyProps={{ variant: "body2" }}
-                        />
+                        <ListItemText primary={amenity} />
                       </ListItem>
                     ))}
                   </List>
@@ -284,21 +291,17 @@ export default function RoomDetails({ room }) {
                       ? "Available for booking"
                       : room.status === "occupied"
                         ? "Currently occupied"
-                        : "Under maintenance"
-                    }
+                        : "Under maintenance"}
                   </Typography>
 
-                  <motion.div
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
+                  <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                     <Button
-                      variant={isRoomBookable(room.status) ? 'contained' : 'outlined'}
+                      variant={isRoomBookable(room.status) ? "contained" : "outlined"}
                       startIcon={
                         <BookmarkIcon
                           sx={{
-                            transform: 'rotate(15deg)',
-                            transition: 'transform 0.2s ease-in-out',
+                            transform: "rotate(15deg)",
+                            transition: "transform 0.2s ease-in-out",
                           }}
                         />
                       }
@@ -306,269 +309,65 @@ export default function RoomDetails({ room }) {
                       disabled={!isRoomBookable(room.status)}
                       size="large"
                       sx={{
-                        '&:hover .MuiSvgIcon-root': {
-                          transform: 'rotate(-0deg)',
-                        }
+                        "&:hover .MuiSvgIcon-root": {
+                          transform: "rotate(-0deg)",
+                        },
                       }}
                       onClick={onBookNow}
                     >
+                      {/* Book now */}
                       {getRoomStatusText(room.status)}
                     </Button>
                   </motion.div>
                 </Box>
 
+                <Stack display={{ xs: "flex", md: "none" }} spacing={3}>
+                  {/* Hotel Policies Card */}
+                  <HotelPolicies room={room} />
+
+                  {/* Room Features Grid */}
+                  <RoomFeatures room={room} />
+                </Stack>
+
                 <Divider />
 
                 {/* Guest Reviews Preview */}
-                <Box>
-                  <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <StarIcon fontSize="small" color="warning" />
-                    Guest Reviews
-                  </Typography>
-                  <Box display="flex" alignItems="center" gap={1} mb={2}>
-                    <Rating value={4.8} precision={0.1} readOnly size="small" />
-                    <Typography variant="body2" color="text.secondary">
-                      4.8 out of 5 (124 reviews)
-                    </Typography>
-                  </Box>
-                  <Stack spacing={1}>
-                    <Paper sx={{ p: 1.5, borderRadius: 2, bgcolor: 'grey.50' }}>
-                      <Typography variant="body2" sx={{ fontStyle: 'italic' }}>
-                        "Amazing room with stunning views! The amenities were top-notch."
-                      </Typography>
-                      <Grid container sx={{ justifyContent: 'end' }}>
-                        <Typography variant="caption" color="text.secondary" mt={0.5}>
-                          - Sarah M., 2 days ago
-                        </Typography>
-                      </Grid>
-                    </Paper>
-
-                    <Paper sx={{ p: 1.5, borderRadius: 2, bgcolor: 'grey.50' }}>
-                      <Typography variant="body2" sx={{ fontStyle: 'italic' }}>
-                        "Perfect location and excellent service. Highly recommended!"
-                      </Typography>
-                      <Grid container sx={{ justifyContent: 'end' }}>
-                        <Typography variant="caption" color="text.secondary" mt={0.5}>
-                          - John D., 1 week ago
-                        </Typography>
-                      </Grid>
-                    </Paper>
-                  </Stack>
-                </Box>
+                <GuestReviews />
 
                 <Divider />
 
                 {/* Location & Nearby Attractions */}
-                <Box>
-                  <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <PlaceIcon fontSize="small" color="error" />
-                    Location & Nearby
-                  </Typography>
-                  <Stack spacing={1}>
-                    <Stack direction="row" spacing={1} alignItems="center">
-                      <PlaceIcon fontSize="small" color="primary" />
-                      <Typography variant="body2">5 min walk to Central Beach</Typography>
-                    </Stack>
-                    <Stack direction="row" spacing={1} alignItems="center">
-                      <PlaceIcon fontSize="small" color="primary" />
-                      <Typography variant="body2">10 min to Downtown Shopping</Typography>
-                    </Stack>
-                    <Stack direction="row" spacing={1} alignItems="center">
-                      <PlaceIcon fontSize="small" color="primary" />
-                      <Typography variant="body2">15 min to Airport</Typography>
-                    </Stack>
-                    <Stack direction="row" spacing={1} alignItems="center">
-                      <PlaceIcon fontSize="small" color="primary" />
-                      <Typography variant="body2">2 min to Metro Station</Typography>
-                    </Stack>
-                  </Stack>
-                </Box>
+                <LocationNearby />
               </Stack>
             </Grid>
           </Grid>
         </CardContent>
-      </Card >
+      </Card>
 
       <Dialog open={modal.open} onClose={modal.closeModal} maxWidth="sm" fullWidth>
-        <Stack
-          p={0}
-          spacing={0}
-          sx={{ height: { xs: '90vh', md: 600 }, maxHeight: '98vh', display: 'flex' }}
-        >
-          {/* Header */}
-          <Box
-            sx={{
-              p: { xs: 1.25, md: 2.5 },
-              borderBottom: 1,
-              borderColor: 'divider',
-              position: 'sticky',
-              top: 0,
-              zIndex: 2,
-              bgcolor: 'background.paper',
-              flexShrink: 0,
-            }}
-          >
-            <Typography variant="h5" fontWeight="bold" gutterBottom>
-              Booking Summary
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Review your reservation details before confirming
-            </Typography>
-          </Box>
+        <BookingSummary
+          room={room}
+          modal={modal}
+          checkIn={checkIn}
+          checkOut={checkOut}
+          onCheckInChange={setCheckIn}
+          onCheckOutChange={setCheckOut}
+          onConfirmBooking={onConfirmBooking}
+          notes={notes}
+          onNotesChange={setNotes}
+          errors={errors}
+          apiError={apiError}
+        />
+      </Dialog>
 
-          {/* Scrollable Content */}
-          <Box
-            sx={{
-              flex: 1,
-              overflowY: 'auto',
-              p: { xs: 1.25, md: 2.5 },
-              bgcolor: 'background.paper',
-            }}
-          >
-            {/* Room Information */}
-            <Box>
-              <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <BedIcon fontSize="small" color="primary" />
-                Room Details
-              </Typography>
-              <Paper sx={{ p: 2, bgcolor: 'grey.50', borderRadius: 2 }}>
-                <Grid container spacing={2}>
-                  <Grid size={8}>
-                    <Typography variant="subtitle1" fontWeight="600">
-                      {room.roomType}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      Room #{room.roomNumber} • Floor {room.floor}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {room.bedType} • Up to {room.capacity} guests • {room.size}
-                    </Typography>
-                  </Grid>
-                  <Grid size={4} sx={{ textAlign: 'right' }}>
-                    <Typography variant="h6" color="primary.main" fontWeight="bold">
-                      ${room.pricePerNight}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      per night
-                    </Typography>
-                  </Grid>
-                </Grid>
-              </Paper>
-            </Box>
-            {/* Booking Dates */}
-            <Box>
-              <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <AccessTimeIcon fontSize="small" color="primary" />
-                Stay Duration
-              </Typography>
-              <Paper sx={{ p: 2, bgcolor: 'grey.50', borderRadius: 2 }}>
-                <Grid container spacing={2}>
-                  <Grid size={6}>
-                    <Typography variant="body2" color="text.secondary">
-                      Check-in
-                    </Typography>
-                    <Typography variant="subtitle1" fontWeight="600">
-                      Dec 24, 2024
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      3:00 PM
-                    </Typography>
-                  </Grid>
-                  <Grid size={6}>
-                    <Typography variant="body2" color="text.secondary">
-                      Check-out
-                    </Typography>
-                    <Typography variant="subtitle1" fontWeight="600">
-                      Dec 27, 2024
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      11:00 AM
-                    </Typography>
-                  </Grid>
-                </Grid>
-              </Paper>
-            </Box>
-            {/* Price Breakdown */}
-            <Box>
-              <Typography variant="h6" gutterBottom>
-                Price Breakdown
-              </Typography>
-              <Paper sx={{ p: 2, bgcolor: 'grey.50', borderRadius: 2 }}>
-                <Stack spacing={1}>
-                  <Box display="flex" justifyContent="space-between">
-                    <Typography variant="body2">
-                      ${room.pricePerNight} × 3 nights
-                    </Typography>
-                    <Typography variant="body2">
-                      ${room.pricePerNight * 3}
-                    </Typography>
-                  </Box>
-                  <Box display="flex" justifyContent="space-between">
-                    <Typography variant="body2">
-                      Service fee
-                    </Typography>
-                    <Typography variant="body2">
-                      $25
-                    </Typography>
-                  </Box>
-                  <Box display="flex" justifyContent="space-between">
-                    <Typography variant="body2">
-                      Taxes
-                    </Typography>
-                    <Typography variant="body2">
-                      ${Math.round((room.pricePerNight * 3 + 25) * 0.12)}
-                    </Typography>
-                  </Box>
-                  <Divider />
-                  <Box display="flex" justifyContent="space-between">
-                    <Typography variant="subtitle1" fontWeight="bold">
-                      Total
-                    </Typography>
-                    <Typography variant="subtitle1" fontWeight="bold" color="primary.main">
-                      ${Math.round((room.pricePerNight * 3 + 25) * 1.12)}
-                    </Typography>
-                  </Box>
-                </Stack>
-              </Paper>
-            </Box>
-          </Box>
-
-          {/* Action Buttons */}
-          <Grid
-            container
-            spacing={2}
-            sx={{
-              p: { xs: 1.25, md: 2.5 },
-              borderTop: 1,
-              borderColor: 'divider',
-              position: 'sticky',
-              bottom: 0,
-              zIndex: 2,
-              bgcolor: 'background.paper',
-              flexShrink: 0,
-            }}
-          >
-            <Grid size={6}>
-              <Button
-                variant="outlined"
-                fullWidth
-                onClick={modal.closeModal}
-              >
-                Cancel
-              </Button>
-            </Grid>
-            <Grid size={6}>
-              <Button
-                fullWidth
-                variant="contained"
-                onClick={onConfirmBooking}
-              >
-                Confirm
-                <Box component='span' pl={1} sx={{ display: { xs: 'none', sm: 'block' } }} >Booking</Box>
-              </Button>
-            </Grid>
-          </Grid>
-        </Stack>
+      <Dialog
+        open={showLoginDialog}
+        onClose={() => setShowLoginDialog(false)}
+        maxWidth="xs"
+        fullWidth
+        sx={{ height: "100%" }}
+      >
+        <Login onSuccess={() => setShowLoginDialog(false)} hideLinks />
       </Dialog>
     </>
   );

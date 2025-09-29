@@ -1,36 +1,44 @@
-import { Button, Card, CardContent, Grid, Typography, IconButton, InputAdornment } from "@mui/material";
-import { useState } from 'react';
+import {
+  Button,
+  Card,
+  CardContent,
+  Grid,
+  Typography,
+  IconButton,
+  InputAdornment,
+} from "@mui/material";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import FormTextField from "@/components/atoms/FormTextField";
-import LoginIcon from '@mui/icons-material/Login';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import PersonIcon from '@mui/icons-material/Person';
-import LockIcon from '@mui/icons-material/Lock';
-import { useNavigate } from 'react-router-dom';
+import LoginIcon from "@mui/icons-material/Login";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import PersonIcon from "@mui/icons-material/Person";
+import LockIcon from "@mui/icons-material/Lock";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 
-export default function Login() {
+export default function Login({ hideLinks = false, onSuccess }) {
   const [formData, setFormData] = useState({
-    email: '',
-    password: ''
+    email: "",
+    password: "",
   });
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
 
   const { login } = useAuth();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const handleInputChange = (field) => (event) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [field]: event.target.value
+      [field]: event.target.value,
     }));
     // Clear error when user starts typing
     if (errors[field]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [field]: ''
+        [field]: "",
       }));
     }
   };
@@ -40,15 +48,15 @@ export default function Login() {
     const newErrors = {};
 
     if (!formData.email) {
-      newErrors.email = 'Email is required';
+      newErrors.email = "Email is required";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email';
+      newErrors.email = "Please enter a valid email";
     }
 
     if (!formData.password) {
-      newErrors.password = 'Password is required';
+      newErrors.password = "Password is required";
     } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
+      newErrors.password = "Password must be at least 6 characters";
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -57,11 +65,16 @@ export default function Login() {
     }
 
     // Call login and navigate based on role
-    await login(formData);
+    await login(formData, onSuccess);
   };
 
   return (
-    <Grid container justifyContent="center" alignItems="center" sx={{ minHeight: '100vh', p: 2 }}>
+    <Grid
+      container
+      justifyContent="center"
+      alignItems="center"
+      sx={{ minHeight: "100%", p: 2 }}
+    >
       <Grid size={{ xs: 12, sm: 8, md: 6, lg: 4 }}>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -78,7 +91,7 @@ export default function Login() {
                     animate={{ scale: 1 }}
                     transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
                   >
-                    <PersonIcon sx={{ fontSize: 36, color: 'primary.main', mb: 2 }} />
+                    <PersonIcon sx={{ fontSize: 36, color: "primary.main", mb: 2 }} />
                   </motion.div>
                   <Typography variant="h3" gutterBottom>
                     Welcome Back
@@ -99,7 +112,7 @@ export default function Login() {
                           label="Email Address"
                           type="email"
                           value={formData.email}
-                          onChange={handleInputChange('email')}
+                          onChange={handleInputChange("email")}
                           errors={errors}
                           slotProps={{
                             input: {
@@ -118,9 +131,9 @@ export default function Login() {
                         <FormTextField
                           name="password"
                           label="Password"
-                          type={showPassword ? 'text' : 'password'}
+                          type={showPassword ? "text" : "password"}
                           value={formData.password}
-                          onChange={handleInputChange('password')}
+                          onChange={handleInputChange("password")}
                           errors={errors}
                           slotProps={{
                             input: {
@@ -136,7 +149,11 @@ export default function Login() {
                                     edge="end"
                                     size="small"
                                   >
-                                    {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                                    {showPassword ? (
+                                      <VisibilityOffIcon />
+                                    ) : (
+                                      <VisibilityIcon />
+                                    )}
                                   </IconButton>
                                 </InputAdornment>
                               ),
@@ -165,41 +182,45 @@ export default function Login() {
                       </Grid>
 
                       {/* Forgot Password Link */}
-                      <Grid size={12} textAlign="center">
-                        <motion.div
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                        >
-                          <Button
-                            variant="text"
-                            size="small"
-                            sx={{ textTransform: 'none' }}
-                          >
-                            Forgot your password?
-                          </Button>
-                        </motion.div>
-                      </Grid>
-
-                      {/* Sign Up Link */}
-                      <Grid size={12} textAlign="center">
-                        <Typography variant="body2" color="text.secondary">
-                          Don't have an account?{' '}
-                          <motion.span
+                      {!hideLinks && (
+                        <Grid size={12} textAlign="center">
+                          <motion.div
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
-                            style={{ display: 'inline-block' }}
                           >
                             <Button
                               variant="text"
                               size="small"
-                              sx={{ textTransform: 'none', p: 0, minWidth: 'auto' }}
-                              onClick={() => navigate('/register')}
+                              sx={{ textTransform: "none" }}
                             >
-                              Sign up here
+                              Forgot your password?
                             </Button>
-                          </motion.span>
-                        </Typography>
-                      </Grid>
+                          </motion.div>
+                        </Grid>
+                      )}
+
+                      {/* Sign Up Link */}
+                      {!hideLinks && (
+                        <Grid size={12} textAlign="center">
+                          <Typography variant="body2" color="text.secondary">
+                            Don't have an account?{" "}
+                            <motion.span
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                              style={{ display: "inline-block" }}
+                            >
+                              <Button
+                                variant="text"
+                                size="small"
+                                sx={{ textTransform: "none", p: 0, minWidth: "auto" }}
+                                onClick={() => navigate("/register")}
+                              >
+                                Sign up here
+                              </Button>
+                            </motion.span>
+                          </Typography>
+                        </Grid>
+                      )}
                     </Grid>
                   </form>
                 </Grid>

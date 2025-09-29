@@ -7,6 +7,8 @@ import { client } from "@gql/client";
 import Spinner from "@components/atoms/Spinner";
 import { SnackbarProvider } from "notistack";
 import { Toaster } from "react-hot-toast";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   // <React.StrictMode>
@@ -15,18 +17,20 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       maxSnack={3}
       anchorOrigin={{ vertical: "top", horizontal: "right" }}
     >
-      <AppThemeProvider>
-        <App />
-        <Spinner />
-        <Toaster
-          position="top-right"
-          toastOptions={{
-            duration: 3000,
-            style: { zIndex: 1401 },
-          }}
-          limit={3}
-        />
-      </AppThemeProvider>
+      <LocalizationProvider dateAdapter={AdapterDateFns}>
+        <AppThemeProvider>
+          <App />
+          <Spinner />
+          <Toaster
+            position="top-right"
+            toastOptions={{
+              duration: 3000,
+              style: { zIndex: 1401 },
+            }}
+            limit={3}
+          />
+        </AppThemeProvider>
+      </LocalizationProvider>
     </SnackbarProvider>
   </ApolloProvider>,
   // </React.StrictMode>

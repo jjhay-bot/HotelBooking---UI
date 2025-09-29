@@ -3,3 +3,4 @@ export { useAutoAnimate } from './useAutoAnimate';
 export { default as useForm } from './useForm';
 export { default as useIntersectionObserver } from './useIntersectionObserver';
 export { useModal } from './useModal';
+export { useRoom } from './useRoom';

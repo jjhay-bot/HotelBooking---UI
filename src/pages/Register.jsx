@@ -1,42 +1,54 @@
-import { Button, Card, CardContent, Grid, Typography, IconButton, InputAdornment } from "@mui/material";
-import { useState } from 'react';
+import {
+  Button,
+  Card,
+  CardContent,
+  Grid,
+  Typography,
+  IconButton,
+  InputAdornment,
+} from "@mui/material";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import FormTextField from "@/components/atoms/FormTextField";
-import PersonAddIcon from '@mui/icons-material/PersonAdd';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import PersonIcon from '@mui/icons-material/Person';
-import LockIcon from '@mui/icons-material/Lock';
-import EmailIcon from '@mui/icons-material/Email';
-import PhoneIcon from '@mui/icons-material/Phone';
-import { useNavigate } from 'react-router-dom';
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import PersonIcon from "@mui/icons-material/Person";
+import LockIcon from "@mui/icons-material/Lock";
+import EmailIcon from "@mui/icons-material/Email";
+import PhoneIcon from "@mui/icons-material/Phone";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function Register() {
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    password: '',
-    confirmPassword: ''
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    password: "",
+    age: 30,
+    confirmPassword: "",
   });
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState({});
+  const [submitting, setSubmitting] = useState(false);
 
-  const navigate = useNavigate()
-
+  const navigate = useNavigate();
+  const { register } = useAuth();
 
   const handleInputChange = (field) => (event) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [field]: event.target.value
+      [field]: event.target.value,
     }));
     // Clear error when user starts typing
     if (errors[field]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [field]: ''
+        [field]: "",
       }));
     }
   };
@@ -45,43 +57,43 @@ export default function Register() {
     const newErrors = {};
 
     if (!formData.firstName.trim()) {
-      newErrors.first_name = 'First name is required';
+      newErrors.first_name = "First name is required";
     }
 
     if (!formData.lastName.trim()) {
-      newErrors.last_name = 'Last name is required';
+      newErrors.last_name = "Last name is required";
     }
 
     if (!formData.email) {
-      newErrors.email = 'Email is required';
+      newErrors.email = "Email is required";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email';
+      newErrors.email = "Please enter a valid email";
     }
 
-    if (!formData.phone) {
-      newErrors.phone = 'Phone number is required';
-    } else if (!/^\+?[\d\s-()]+$/.test(formData.phone)) {
-      newErrors.phone = 'Please enter a valid phone number';
-    }
+    // if (!formData.phone) {
+    //   newErrors.phone = 'Phone number is required';
+    // } else if (!/^\+?[\d\s-()]+$/.test(formData.phone)) {
+    //   newErrors.phone = 'Please enter a valid phone number';
+    // }
 
     if (!formData.password) {
-      newErrors.password = 'Password is required';
+      newErrors.password = "Password is required";
     } else if (formData.password.length < 8) {
-      newErrors.password = 'Password must be at least 8 characters';
+      newErrors.password = "Password must be at least 8 characters";
     } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.password)) {
-      newErrors.password = 'Password must contain uppercase, lowercase, and number';
+      newErrors.password = "Password must contain uppercase, lowercase, and number";
     }
 
     if (!formData.confirmPassword) {
-      newErrors.confirm_password = 'Please confirm your password';
+      newErrors.confirm_password = "Please confirm your password";
     } else if (formData.password !== formData.confirmPassword) {
-      newErrors.confirm_password = 'Passwords do not match';
+      newErrors.confirm_password = "Passwords do not match";
     }
 
     return newErrors;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = validateForm();
 
@@ -90,12 +102,18 @@ export default function Register() {
       return;
     }
 
-    // Handle successful registration here
-    console.log('Registration submitted:', formData);
+    setSubmitting(true);
+    await register(formData);
+    setSubmitting(false);
   };
 
   return (
-    <Grid container justifyContent="center" alignItems="center" sx={{ minHeight: '100vh', p: 2 }}>
+    <Grid
+      container
+      justifyContent="center"
+      alignItems="center"
+      sx={{ minHeight: "100vh", p: 2 }}
+    >
       <Grid size={{ xs: 12, sm: 10, md: 8, lg: 6 }}>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -112,7 +130,7 @@ export default function Register() {
                     animate={{ scale: 1 }}
                     transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
                   >
-                    <PersonAddIcon sx={{ fontSize: 36, color: 'primary.main', mb: 2 }} />
+                    <PersonAddIcon sx={{ fontSize: 36, color: "primary.main", mb: 2 }} />
                   </motion.div>
                   <Typography variant="h4" gutterBottom>
                     Create Account
@@ -132,7 +150,7 @@ export default function Register() {
                           name="firstName"
                           label="First Name"
                           value={formData.firstName}
-                          onChange={handleInputChange('firstName')}
+                          onChange={handleInputChange("firstName")}
                           errors={errors}
                           slotProps={{
                             input: {
@@ -151,7 +169,7 @@ export default function Register() {
                           name="lastName"
                           label="Last Name"
                           value={formData.lastName}
-                          onChange={handleInputChange('lastName')}
+                          onChange={handleInputChange("lastName")}
                           errors={errors}
                           slotProps={{
                             input: {
@@ -172,7 +190,7 @@ export default function Register() {
                           label="Email Address"
                           type="email"
                           value={formData.email}
-                          onChange={handleInputChange('email')}
+                          onChange={handleInputChange("email")}
                           errors={errors}
                           slotProps={{
                             input: {
@@ -187,7 +205,7 @@ export default function Register() {
                       </Grid>
 
                       {/* Phone Field */}
-                      <Grid size={12}>
+                      {/* <Grid size={12}>
                         <FormTextField
                           name="phone"
                           label="Phone Number"
@@ -205,16 +223,16 @@ export default function Register() {
                             },
                           }}
                         />
-                      </Grid>
+                      </Grid> */}
 
                       {/* Password Fields */}
                       <Grid size={{ xs: 12, sm: 6 }}>
                         <FormTextField
                           name="password"
                           label="Password"
-                          type={showPassword ? 'text' : 'password'}
+                          type={showPassword ? "text" : "password"}
                           value={formData.password}
-                          onChange={handleInputChange('password')}
+                          onChange={handleInputChange("password")}
                           errors={errors}
                           slotProps={{
                             input: {
@@ -230,7 +248,11 @@ export default function Register() {
                                     edge="end"
                                     size="small"
                                   >
-                                    {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                                    {showPassword ? (
+                                      <VisibilityOffIcon />
+                                    ) : (
+                                      <VisibilityIcon />
+                                    )}
                                   </IconButton>
                                 </InputAdornment>
                               ),
@@ -243,9 +265,9 @@ export default function Register() {
                         <FormTextField
                           name="confirmPassword"
                           label="Confirm Password"
-                          type={showConfirmPassword ? 'text' : 'password'}
+                          type={showConfirmPassword ? "text" : "password"}
                           value={formData.confirmPassword}
-                          onChange={handleInputChange('confirmPassword')}
+                          onChange={handleInputChange("confirmPassword")}
                           errors={errors}
                           slotProps={{
                             input: {
@@ -257,11 +279,17 @@ export default function Register() {
                               endAdornment: (
                                 <InputAdornment position="end">
                                   <IconButton
-                                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                    onClick={() =>
+                                      setShowConfirmPassword(!showConfirmPassword)
+                                    }
                                     edge="end"
                                     size="small"
                                   >
-                                    {showConfirmPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                                    {showConfirmPassword ? (
+                                      <VisibilityOffIcon />
+                                    ) : (
+                                      <VisibilityIcon />
+                                    )}
                                   </IconButton>
                                 </InputAdornment>
                               ),
@@ -272,8 +300,13 @@ export default function Register() {
 
                       {/* Password Requirements */}
                       <Grid size={12}>
-                        <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>
-                          Password must be at least 8 characters and contain uppercase, lowercase, and number
+                        <Typography
+                          variant="caption"
+                          color="text.secondary"
+                          sx={{ display: "block", mt: 1 }}
+                        >
+                          Password must be at least 8 characters and contain uppercase,
+                          lowercase, and number
                         </Typography>
                       </Grid>
 
@@ -290,8 +323,9 @@ export default function Register() {
                             type="submit"
                             startIcon={<PersonAddIcon />}
                             sx={{ py: 1.5 }}
+                            disabled={submitting}
                           >
-                            Create Account
+                            {submitting ? "Creating Account..." : "Create Account"}
                           </Button>
                         </motion.div>
                       </Grid>
@@ -299,17 +333,17 @@ export default function Register() {
                       {/* Login Link */}
                       <Grid size={12} textAlign="center">
                         <Typography variant="body2" color="text.secondary">
-                          Already have an account?{' '}
+                          Already have an account?{" "}
                           <motion.span
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
-                            style={{ display: 'inline-block' }}
+                            style={{ display: "inline-block" }}
                           >
                             <Button
                               variant="text"
                               size="small"
-                              sx={{ textTransform: 'none', p: 0, minWidth: 'auto' }}
-                              onClick={() => navigate('/login')}
+                              sx={{ textTransform: "none", p: 0, minWidth: "auto" }}
+                              onClick={() => navigate("/login")}
                             >
                               Sign in here
                             </Button>

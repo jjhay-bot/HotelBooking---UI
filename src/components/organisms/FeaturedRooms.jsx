@@ -15,34 +15,29 @@ import { getRoomStatusStyle, getRoomStatusText, isRoomBookable } from "@/utils/r
 import LocalHotelRoundedIcon from "@mui/icons-material/LocalHotelRounded";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import env from "@/constants/env";
+import { LoadingState } from "../atoms/Spinner";
+import { useRooms } from "@/hooks/useRooms";
+import { motion } from "framer-motion";
 
-export function FeaturedRooms() {
+export function FeaturedRooms({ filters = {} }) {
   const theme = useTheme();
   const navigate = useNavigate();
-  const [activeIndex, setActiveIndex] = useState(null);
-  const [rooms, setRooms] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { rooms, loading, error } = useRooms(filters);
+  const [activeIndex, setActiveIndex] = useState(0);
 
+  // Reset activeIndex to 0 when rooms change
   useEffect(() => {
-    setLoading(true);
-    fetch(`${env.API_URI}/api/v1/rooms`)
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to fetch rooms");
-        return res.json();
-      })
-      .then((data) => {
-        setRooms(data.rooms || data); // Adjust if API shape is different
-        setLoading(false);
-      })
-      .catch((err) => {
-        setError(err.message);
-        setLoading(false);
-      });
-  }, []);
+    setActiveIndex(0);
+  }, [rooms]);
 
-  if (loading) return <Typography>Loading rooms...</Typography>;
+  if (loading)
+    return (
+      <>
+        <LoadingState />
+        <Typography>Loading rooms...</Typography>
+      </>
+    );
+
   if (error) return <Typography color="error">{error}</Typography>;
 
   return (
@@ -68,7 +63,12 @@ export function FeaturedRooms() {
 
                 <Stack spacing={2} pt={2}>
                   <Box display="flex" justifyContent="space-between" alignItems="center">
-                    <Typography variant="h5">{r.roomType}</Typography>
+                    <Typography variant="h5">
+                      {r.roomType}
+                      <Box component="span" sx={{ color: "#bdbdbd", px: 1 }}>
+                        #{r.roomNumber}
+                      </Box>
+                    </Typography>
 
                     <Chip
                       label={r.status}
@@ -96,6 +96,14 @@ export function FeaturedRooms() {
                       <Typography variant="body2" color="text.secondary">
                         Up to {r.capacity} guests
                       </Typography>
+                      {r.size && (
+                        <>
+                          <span style={{ margin: "0 8px", color: "#bdbdbd" }}>|</span>
+                          <Typography variant="body2" color="text.secondary">
+                            {r.size}
+                          </Typography>
+                        </>
+                      )}
                     </Stack>
 
                     <Typography variant="h6" color="primary.main" fontWeight="bold">
@@ -103,16 +111,18 @@ export function FeaturedRooms() {
                     </Typography>
                   </Box>
 
-                  <Button
-                    variant={isRoomBookable(r.status) ? "contained" : "outlined"}
-                    startIcon={<LocalHotelRoundedIcon fontSize="8px" />}
-                    fullWidth
-                    disabled={!isRoomBookable(r.status)}
-                    sx={{ mt: 2 }}
-                    onClick={() => navigate(`/room/${r.id}`)}
-                  >
-                    {getRoomStatusText(r.status)}
-                  </Button>
+                  <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                    <Button
+                      variant={isRoomBookable(r.status) ? "contained" : "outlined"}
+                      startIcon={<LocalHotelRoundedIcon fontSize="8px" />}
+                      fullWidth
+                      disabled={!isRoomBookable(r.status)}
+                      sx={{ mt: 2 }}
+                      onClick={() => navigate(`/room/${r.id}`)}
+                    >
+                      {getRoomStatusText(r.status)}
+                    </Button>
+                  </motion.div>
                 </Stack>
               </CardContent>
             </Card>

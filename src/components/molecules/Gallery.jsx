@@ -7,7 +7,7 @@ import { useAutoAnimate } from "@/hooks/useAutoAnimate";
 export const MotionBox = motion(Box);
 
 export default function Gallery({ cards = [], anime = false }) {
-  const [active, setActive] = useState(1);
+  const [active, setActive] = useState(cards[0]?.id || null);
   const theme = useTheme();
 
   // Memoize the step function to avoid unnecessary effect reruns
