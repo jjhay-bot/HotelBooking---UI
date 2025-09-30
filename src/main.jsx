@@ -22,7 +22,8 @@ ReactDOM.createRoot(document.getElementById("root")).render(
           <App />
           <Spinner />
           <Toaster
-            position="top-right"
+            // position="top-right"
+            position="bottom-center"
             toastOptions={{
               duration: 3000,
               style: { zIndex: 1401 },

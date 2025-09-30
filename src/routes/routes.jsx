@@ -32,7 +32,20 @@ const router = createBrowserRouter([
     path: "/contact",
     element: <ContactUs />,
   },
-  // ADMIN DASHBOARD
+  // ADMIN DASHBOARD ROUTES FOR TABBED NAVIGATION
+  {
+    path: "/admin/bookings",
+    element: <AdminDashboard />,
+  },
+  {
+    path: "/admin/users",
+    element: <AdminDashboard />,
+  },
+  {
+    path: "/admin/rooms",
+    element: <AdminDashboard />,
+  },
+  // Optionally keep the old dashboard route for backward compatibility
   {
     path: "/admin/dashboard",
     element: <AdminDashboard />,

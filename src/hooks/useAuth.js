@@ -1,6 +1,7 @@
 import { onError, onSuccess as onSuccessNotif } from "@/gql/uiActions";
 import { useNavigate } from "react-router-dom";
 import env from "@/constants/env";
+import { lowerCase } from "lodash";
 
 export function useAuth() {
   const navigate = useNavigate();
@@ -32,14 +33,14 @@ export function useAuth() {
         sessionStorage.setItem("jwt", data.token);
       }
       sessionStorage.setItem("isAuthenticated", "true");
-      sessionStorage.setItem("userRole", user.role);
+      sessionStorage.setItem("userRole", lowerCase(user.role));
       // Navigate based on role
       if (onSuccess) {
         onSuccess();
         return;
       }
       onSuccessNotif("Login successful!");
-      if (user.role === "admin") {
+      if (lowerCase(user.role) === "admin") {
         navigate("/admin/dashboard");
       } else {
         navigate("/");

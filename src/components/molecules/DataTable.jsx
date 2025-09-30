@@ -12,8 +12,13 @@ export default function DataTable({
   rows = [],
   columns = [],
   maxHeight = "calc(100vh - 240px)",
+  page = 1,
+  pageSize = 10,
+  total = 0,
+  onPageChange,
 }) {
   const lastColIdx = columns.length - 1;
+  const pageCount = Math.ceil(total / pageSize) || 1;
 
   return (
     <>
@@ -26,14 +31,15 @@ export default function DataTable({
                   key={col.field}
                   align={col.align || "left"}
                   style={{
+                    minWidth: col.minWidth,
                     ...(col.style || {}),
                     ...(colIdx === lastColIdx
                       ? {
-                          position: "sticky",
-                          right: 0,
-                          zIndex: 3, // header stays on top
-                          background: "#fff",
-                        }
+                        position: "sticky",
+                        right: 0,
+                        zIndex: 3, // header stays on top
+                        background: "#fff",
+                      }
                       : {}),
                   }}
                 >
@@ -54,14 +60,15 @@ export default function DataTable({
                     key={col.field}
                     align={col.align || "left"}
                     style={{
+                      minWidth: col.minWidth,
                       ...(col.style || {}),
                       ...(colIdx === lastColIdx
                         ? {
-                            position: "sticky",
-                            right: 0,
-                            zIndex: 2,
-                            background: "#fff",
-                          }
+                          position: "sticky",
+                          right: 0,
+                          zIndex: 2,
+                          background: "#fff",
+                        }
                         : {}),
                     }}
                   >
@@ -74,23 +81,25 @@ export default function DataTable({
         </Table>
       </TableContainer>
 
-      <Grid container justifyContent="end" pt={2} width="100%">
-        <Grid>
-          <Pagination
-            count={3}
-            color="secondary"
-            variant="outlined"
-            shape="rounded"
-            hidePrevButton
-            hideNextButton
-            sx={{
-              "& .MuiPaginationItem-root": {
-                borderRadius: 2,
-              },
-            }}
-          />
+      {onPageChange && pageCount > 1 && (
+        <Grid container justifyContent="end" pt={2} width="100%">
+          <Grid>
+            <Pagination
+              count={pageCount}
+              page={page}
+              onChange={(_, value) => onPageChange(value)}
+              color="secondary"
+              variant="outlined"
+              shape="rounded"
+              sx={{
+                "& .MuiPaginationItem-root": {
+                  borderRadius: 2,
+                },
+              }}
+            />
+          </Grid>
         </Grid>
-      </Grid>
+      )}
     </>
   );
 }

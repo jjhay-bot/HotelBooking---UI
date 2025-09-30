@@ -14,7 +14,7 @@ import { useTheme } from "@mui/material/styles";
 import { getRoomStatusStyle, getRoomStatusText, isRoomBookable } from "@/utils/roomUtils";
 import LocalHotelRoundedIcon from "@mui/icons-material/LocalHotelRounded";
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { LoadingState } from "../atoms/Spinner";
 import { useRooms } from "@/hooks/useRooms";
 import { motion } from "framer-motion";
@@ -22,49 +22,45 @@ import { motion } from "framer-motion";
 export function FeaturedRooms({ filters = {} }) {
   const theme = useTheme();
   const navigate = useNavigate();
-  const { rooms, loading, error, hasMore, loadMore } = useRooms(filters);
+  const pageSize = 6;
+  const [page, setPage] = useState(1);
+  const [allRooms, setAllRooms] = useState([]);
+  const { rooms, loading, error, total } = useRooms(page, pageSize, filters);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [visibleCount, setVisibleCount] = useState(0);
-  const prevRoomsRef = useRef([]);
 
-  // Staggered reveal for both initial and load more
+  // Append new rooms when page or filters change
   useEffect(() => {
-    const prevRooms = prevRoomsRef.current;
-    // Check if this is a new search/filter (not load more)
-    const isNewSearch =
-      prevRooms.length === 0 ||
-      rooms.length < prevRooms.length ||
-      !prevRooms.every((room, i) => rooms[i]?.id === room.id);
+    if (page === 1) {
+      setAllRooms(rooms);
+    } else if (rooms && rooms.length > 0) {
+      setAllRooms((prev) => {
+        // Only add rooms that are not already in prev (by id)
+        const prevIds = new Set(prev.map((r) => r.id));
+        const newRooms = rooms.filter((r) => !prevIds.has(r.id));
+        return [...prev, ...newRooms];
+      });
+    }
+  }, [rooms, page]);
 
-    if (!isNewSearch && rooms.length > prevRooms.length) {
-      // Load more: stagger reveal only new cards
-      let i = prevRooms.length;
-      const interval = setInterval(() => {
-        i++;
-        setVisibleCount(i);
-        if (i >= rooms.length) clearInterval(interval);
-      }, 150);
-      prevRoomsRef.current = rooms;
-      return () => clearInterval(interval);
-    }
-    // New search/filter: staggered reveal from 0
+  // Reset on filter change
+  const filtersKey = JSON.stringify(filters);
+  useEffect(() => {
+    setPage(1);
+  }, [filtersKey]);
+
+  useEffect(() => {
     setActiveIndex(0);
-    setVisibleCount(0);
-    prevRoomsRef.current = rooms;
-    if (rooms && rooms.length > 0) {
-      let i = 0;
-      const interval = setInterval(() => {
-        i++;
-        setVisibleCount((prev) => {
-          if (prev < rooms.length) return prev + 1;
-          clearInterval(interval);
-          return prev;
-        });
-        if (i >= rooms.length) clearInterval(interval);
-      }, 150);
-      return () => clearInterval(interval);
-    }
-  }, [rooms]);
+  }, [allRooms]);
+
+  if (loading && page === 1)
+    return (
+      <>
+        <LoadingState />
+        <Typography>Loading rooms...</Typography>
+      </>
+    );
+
+  if (error) return <Typography color="error">{error}</Typography>;
 
   return (
     <Stack>
@@ -72,12 +68,9 @@ export function FeaturedRooms({ filters = {} }) {
         Featured Rooms
       </Typography>
 
-      {loading && <LoadingState />}
-      {error && <Typography color="error">{error}</Typography>}
-
       <Grid container spacing={3}>
-        {rooms?.slice(0, visibleCount).map((r, ind) => (
-          <Grid key={r.id} size={{ xs: 12, sm: 6, md: 4, lg: 4 }}>
+        {allRooms?.map((r, ind) => (
+          <Grid key={ind} size={{ xs: 12, sm: 6, md: 4, lg: 4 }}>
             <Card
               sx={{ borderRadius: 6 }}
               tabIndex={0}
@@ -158,9 +151,9 @@ export function FeaturedRooms({ filters = {} }) {
           </Grid>
         ))}
       </Grid>
-      {hasMore && visibleCount >= rooms.length && (
+      {allRooms.length < total && (
         <Button
-          onClick={loadMore}
+          onClick={() => setPage((p) => p + 1)}
           disabled={loading}
           variant="outlined"
           sx={{ my: 3, mx: "auto", display: "block", minWidth: 200 }}

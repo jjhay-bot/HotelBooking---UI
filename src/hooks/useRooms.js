@@ -1,58 +1,54 @@
-import { useState, useEffect, useCallback } from "react";
-import env from "@/constants/env";
+import { env } from "@/constants";
+import { useEffect, useState } from "react";
 
-export function useRooms(filters = {}) {
+export function useRooms(page = 1, pageSize = 10, filters = {}, trigger = 0) {
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [page, setPage] = useState(filters.page || 1);
-  const [pageSize] = useState(filters.pageSize || 6);
-  const [hasMore, setHasMore] = useState(true);
+  const [total, setTotal] = useState(0);
 
-  // Always include status=available unless overridden
-  const status = filters.status || "available";
-
-  const fetchRooms = useCallback((reset = false, customPage = page) => {
+  useEffect(() => {
+    let isMounted = true;
     setLoading(true);
+    // Build query params from filters
     const params = new URLSearchParams();
+    params.append("page", page);
+    params.append("pageSize", pageSize);
+    if (filters.status) params.append("status", filters.status);
     if (filters.checkIn) params.append("checkIn", filters.checkIn);
     if (filters.checkOut) params.append("checkOut", filters.checkOut);
     if (filters.guestCount) params.append("guestCount", filters.guestCount);
-    if (filters.roomTypeId) params.append("roomTypeId", filters.roomTypeId);
-    params.append("status", status);
-    params.append("page", customPage);
-    params.append("pageSize", pageSize);
-    const url = `${env.API_URI}/api/v1/rooms?${params.toString()}`;
-    fetch(url)
+    if (filters.roomTypeId) {
+      params.append("roomTypeId", filters.roomTypeId);
+    } else if (filters.roomType) {
+      // Only append roomType if roomTypeId is not present
+      params.append("roomTypeId", filters.roomType); // treat legacy roomType as roomTypeId
+    }
+
+    const token = sessionStorage.getItem("jwt");
+    fetch(`${env.API_URI}/api/v1/rooms?${params.toString()}`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    })
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch rooms");
         return res.json();
       })
       .then((data) => {
-        const newRooms = data.rooms || data;
-        setRooms((prev) => (reset ? newRooms : [...prev, ...newRooms]));
-        setHasMore(newRooms.length === pageSize);
-        setLoading(false);
+        if (isMounted) {
+          setRooms(Array.isArray(data.rooms) ? data.rooms : []);
+          setTotal(typeof data.totalCount === "number" ? data.totalCount : 0);
+        }
       })
       .catch((err) => {
-        setError(err.message);
-        setLoading(false);
+        if (isMounted) setError(err);
+      })
+      .finally(() => {
+        if (isMounted) setLoading(false);
       });
-  }, [filters, pageSize, status]);
+    return () => {
+      isMounted = false;
+    };
+  }, [page, pageSize, filters.status, filters.checkIn, filters.checkOut, filters.guestCount, filters.roomTypeId, filters.roomType, trigger]);
 
-  // Initial and filter change effect
-  useEffect(() => {
-    setPage(filters.page || 1);
-    fetchRooms(true, filters.page || 1);
-    // eslint-disable-next-line
-  }, [filters.checkIn, filters.checkOut, filters.guestCount, filters.roomTypeId, status]);
-
-  // Load more for infinite scroll or button
-  const loadMore = () => {
-    const nextPage = page + 1;
-    setPage(nextPage);
-    fetchRooms(false, nextPage);
-  };
-
-  return { rooms, loading, error, hasMore, loadMore };
+  return { rooms, loading, error, total };
 }

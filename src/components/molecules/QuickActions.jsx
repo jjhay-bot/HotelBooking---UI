@@ -25,7 +25,7 @@ const actions = [
     icon: <LoginIcon />,
     name: "Login",
     href: "/login",
-    showIf: (role) => !sessionStorage.getItem("isAuthenticated"),
+    showIf: () => !sessionStorage.getItem("isAuthenticated"),
   },
   {
     icon: <LogoutIcon />,
@@ -35,7 +35,7 @@ const actions = [
       sessionStorage.removeItem("userRole");
       navigate("/login");
     },
-    showIf: (role) => sessionStorage.getItem("isAuthenticated"),
+    showIf: () => sessionStorage.getItem("isAuthenticated"),
   },
 ];
 

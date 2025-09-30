@@ -1,11 +1,29 @@
 import { Grid, Tab, Tabs, Typography } from "@mui/material";
 import Screen from "@/components/atoms/Screen.jsx";
 import UserTable from "../components/templates/UserTable";
-import { useState } from "react";
+import { useMemo } from "react";
 import RoomTable from "@/components/templates/RoomTable";
+import BookingsTable from "@/components/templates/BookingsTable";
+import { useNavigate, useLocation } from "react-router-dom";
+
+const tabRoutes = [
+  "/admin/bookings",
+  "/admin/users",
+  "/admin/rooms",
+];
 
 export default function AdminDashboard() {
-  const [activeTab, setActiveTab] = useState(0);
+  const navigate = useNavigate();
+  const location = useLocation();
+  // Determine active tab from route
+  const activeTab = useMemo(() => {
+    const idx = tabRoutes.findIndex((route) => location.pathname.startsWith(route));
+    return idx === -1 ? 0 : idx;
+  }, [location.pathname]);
+
+  const handleTabChange = (e, value) => {
+    navigate(tabRoutes[value]);
+  };
 
   return (
     <Screen>
@@ -16,20 +34,20 @@ export default function AdminDashboard() {
       <Grid container justifyContent="end" pb={1} px={1}>
         <Tabs
           value={activeTab}
-          onChange={(e, value) => setActiveTab(value)}
+          onChange={handleTabChange}
           textColor="secondary"
           indicatorColor="secondary"
           aria-label="active tab"
         >
-          <Tab value={0} label="Users" />
-          <Tab value={1} label="Rooms" />
-          <Tab value={2} label="Archive" />
+          <Tab value={0} label="Bookings" />
+          <Tab value={1} label="Users" />
+          <Tab value={2} label="Rooms" />
         </Tabs>
       </Grid>
 
-      {activeTab === 0 && <UserTable />}
-      {activeTab === 1 && <RoomTable />}
-      {/* {activeTab === 2 && <UserTable />} */}
+      {activeTab === 0 && <BookingsTable />}
+      {activeTab === 1 && <UserTable />}
+      {activeTab === 2 && <RoomTable />}
     </Screen>
   );
 }

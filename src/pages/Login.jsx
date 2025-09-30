@@ -73,9 +73,9 @@ export default function Login({ hideLinks = false, onSuccess }) {
       container
       justifyContent="center"
       alignItems="center"
-      sx={{ minHeight: "100%", p: 2, maxWidth: 480, margin: "0 auto" }}
+      sx={{ minHeight: "100%", p: 2 }}
     >
-      <Grid size={{ xs: 12, }}>
+      <Grid size={{ xs: 12, sm: 8, md: 6, lg: 4 }}>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
