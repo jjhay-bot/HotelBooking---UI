@@ -42,6 +42,7 @@ export const FilterForm = ({ setFilters }) => {
       guestCount,
       roomTypeId: selectedRoomType, // should be ID from roomTypes
     });
+    setCollapsed(false);
   };
 
   const handleReset = () => {

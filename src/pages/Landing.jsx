@@ -21,7 +21,7 @@ const LandingPage = () => {
   return (
     <Screen
       header={
-        <Stack py={2}>
+        <Stack pt={2}>
           <FilterForm filters={filters} setFilters={setFilters} />
         </Stack>
       }

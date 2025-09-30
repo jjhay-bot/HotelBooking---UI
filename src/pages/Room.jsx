@@ -14,7 +14,7 @@ export default function Room() {
 
   return (
     <Screen>
-      <Stack p={2} spacing={3}>
+      <Stack py={2} px={{ xs: 1, md: 2 }} spacing={3}>
         {/* Back Button */}
         <Box>
           <motion.div whileHover={{ scaleY: 1.02 }} whileTap={{ scale: 0.98 }}>
