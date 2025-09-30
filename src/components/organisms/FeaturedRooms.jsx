@@ -22,7 +22,7 @@ import { motion } from "framer-motion";
 export function FeaturedRooms({ filters = {} }) {
   const theme = useTheme();
   const navigate = useNavigate();
-  const { rooms, loading, error } = useRooms(filters);
+  const { rooms, loading, error, hasMore, loadMore } = useRooms(filters);
   const [activeIndex, setActiveIndex] = useState(0);
 
   // Reset activeIndex to 0 when rooms change
@@ -30,21 +30,14 @@ export function FeaturedRooms({ filters = {} }) {
     setActiveIndex(0);
   }, [rooms]);
 
-  if (loading)
-    return (
-      <>
-        <LoadingState />
-        <Typography>Loading rooms...</Typography>
-      </>
-    );
-
-  if (error) return <Typography color="error">{error}</Typography>;
-
   return (
     <Stack>
       <Typography variant="h3" pb={1.5}>
         Featured Rooms
       </Typography>
+
+      {loading && <LoadingState />}
+      {error && <Typography color="error">{error}</Typography>}
 
       <Grid container spacing={3}>
         {rooms?.map((r, ind) => (
@@ -129,6 +122,16 @@ export function FeaturedRooms({ filters = {} }) {
           </Grid>
         ))}
       </Grid>
+      {hasMore && (
+        <Button
+          onClick={loadMore}
+          disabled={loading}
+          variant="outlined"
+          sx={{ mt: 3, mx: "auto", display: "block", minWidth: 200 }}
+        >
+          {loading ? "Loading..." : "Load More"}
+        </Button>
+      )}
     </Stack>
   );
 }
