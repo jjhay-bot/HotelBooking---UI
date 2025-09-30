@@ -6,7 +6,7 @@ export function useRooms(filters = {}) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [page, setPage] = useState(filters.page || 1);
-  const [pageSize] = useState(filters.pageSize || 3);
+  const [pageSize] = useState(filters.pageSize || 6);
   const [hasMore, setHasMore] = useState(true);
 
   // Always include status=available unless overridden

@@ -14,7 +14,7 @@ import { useTheme } from "@mui/material/styles";
 import { getRoomStatusStyle, getRoomStatusText, isRoomBookable } from "@/utils/roomUtils";
 import LocalHotelRoundedIcon from "@mui/icons-material/LocalHotelRounded";
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { LoadingState } from "../atoms/Spinner";
 import { useRooms } from "@/hooks/useRooms";
 import { motion } from "framer-motion";
@@ -24,10 +24,46 @@ export function FeaturedRooms({ filters = {} }) {
   const navigate = useNavigate();
   const { rooms, loading, error, hasMore, loadMore } = useRooms(filters);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [visibleCount, setVisibleCount] = useState(0);
+  const prevRoomsRef = useRef([]);
 
-  // Reset activeIndex to 0 when rooms change
+  // Staggered reveal for both initial and load more
   useEffect(() => {
+    const prevRooms = prevRoomsRef.current;
+    // Check if this is a new search/filter (not load more)
+    const isNewSearch =
+      prevRooms.length === 0 ||
+      rooms.length < prevRooms.length ||
+      !prevRooms.every((room, i) => rooms[i]?.id === room.id);
+
+    if (!isNewSearch && rooms.length > prevRooms.length) {
+      // Load more: stagger reveal only new cards
+      let i = prevRooms.length;
+      const interval = setInterval(() => {
+        i++;
+        setVisibleCount(i);
+        if (i >= rooms.length) clearInterval(interval);
+      }, 150);
+      prevRoomsRef.current = rooms;
+      return () => clearInterval(interval);
+    }
+    // New search/filter: staggered reveal from 0
     setActiveIndex(0);
+    setVisibleCount(0);
+    prevRoomsRef.current = rooms;
+    if (rooms && rooms.length > 0) {
+      let i = 0;
+      const interval = setInterval(() => {
+        i++;
+        setVisibleCount((prev) => {
+          if (prev < rooms.length) return prev + 1;
+          clearInterval(interval);
+          return prev;
+        });
+        if (i >= rooms.length) clearInterval(interval);
+      }, 150);
+      return () => clearInterval(interval);
+    }
   }, [rooms]);
 
   return (
@@ -40,8 +76,8 @@ export function FeaturedRooms({ filters = {} }) {
       {error && <Typography color="error">{error}</Typography>}
 
       <Grid container spacing={3}>
-        {rooms?.map((r, ind) => (
-          <Grid key={ind} size={{ xs: 12, sm: 6, md: 4, lg: 4 }}>
+        {rooms?.slice(0, visibleCount).map((r, ind) => (
+          <Grid key={r.id} size={{ xs: 12, sm: 6, md: 4, lg: 4 }}>
             <Card
               sx={{ borderRadius: 6 }}
               tabIndex={0}
@@ -122,12 +158,12 @@ export function FeaturedRooms({ filters = {} }) {
           </Grid>
         ))}
       </Grid>
-      {hasMore && (
+      {hasMore && visibleCount >= rooms.length && (
         <Button
           onClick={loadMore}
           disabled={loading}
           variant="outlined"
-          sx={{ mt: 3, mx: "auto", display: "block", minWidth: 200 }}
+          sx={{ my: 3, mx: "auto", display: "block", minWidth: 200 }}
         >
           {loading ? "Loading..." : "Load More"}
         </Button>

@@ -363,8 +363,8 @@ export default function RoomDetails({ room }) {
       <Dialog
         open={showLoginDialog}
         onClose={() => setShowLoginDialog(false)}
-        maxWidth="xs"
-        fullWidth
+        maxWidth="sm"
+        // fullWidth
         sx={{ height: "100%" }}
       >
         <Login onSuccess={() => setShowLoginDialog(false)} hideLinks />
