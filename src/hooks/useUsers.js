@@ -10,9 +10,8 @@ export default function useUsers(page = 1, pageSize = 10) {
   useEffect(() => {
     let isMounted = true;
     setLoading(true);
-    const token = sessionStorage.getItem("jwt");
     fetch(`${env.API_URI}/api/v1/users?page=${page}&pageSize=${pageSize}`, {
-      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      credentials: "include", // Send cookies for authentication
     })
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch users");

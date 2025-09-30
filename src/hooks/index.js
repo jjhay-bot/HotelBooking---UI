@@ -7,4 +7,5 @@ export { useModal } from './useModal';
 export { useRoom } from './useRoom';
 export { useRoomTypes } from './useRoomTypes';
 export { useRooms } from './useRooms';
+export { useStaggeredRooms } from './useStaggeredRooms';
 export { default as useUsers } from './useUsers';

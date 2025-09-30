@@ -19,6 +19,7 @@ export function useAuth() {
           email: formData.email,
           password: formData.password,
         }),
+        credentials: "include", // Accept and send cookies for authentication
       });
       if (!res.ok) {
         const errorData = await res.json();
