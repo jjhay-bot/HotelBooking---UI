@@ -10,47 +10,51 @@ import LoginIcon from "@mui/icons-material/Login";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-const actions = [
-  { icon: <HomeIcon />, name: "Home", href: "/" },
-  { icon: <LocalHotelRoundedIcon />, name: "Book Now", href: "/room/1" },
-  { icon: <ContactMailIcon />, name: "Contact Us", href: "/contact" },
-  {
-    icon: <DashboardIcon />,
-    name: "Admin Dashboard",
-    href: "/admin/dashboard",
-    role: "admin",
-  },
-  {
-    icon: <LoginIcon />,
-    name: "Login",
-    href: "/login",
-    showIf: () => !sessionStorage.getItem("isAuthenticated"),
-  },
-  {
-    icon: <LogoutIcon />,
-    name: "Logout",
-    onClick: (navigate) => {
-      sessionStorage.clear();
-      navigate("/login");
-    },
-    showIf: () => sessionStorage.getItem("isAuthenticated"),
-  },
-];
+import { useAuth } from "@/context/AuthContext";
 
 export default function QuickActions() {
   const [open, setOpen] = useState(false);
   const handleToggle = () => setOpen((prev) => !prev);
   const navigate = useNavigate();
+  const auth = useAuth() || {};
+  const user = auth.user;
+  const logout = auth.logout || (() => {});
 
-  // Get user role from sessionStorage (default to 'user' if not set)
-  const userRole = sessionStorage.getItem("userRole") || "user";
+  // Define actions inside the component to access user and logout
+  const actions = [
+    { icon: <HomeIcon />, name: "Home", href: "/" },
+    { icon: <LocalHotelRoundedIcon />, name: "Book Now", href: "/room/1" },
+    { icon: <ContactMailIcon />, name: "Contact Us", href: "/contact" },
+    {
+      icon: <DashboardIcon />,
+      name: "Admin Dashboard",
+      href: "/admin/dashboard",
+      role: "admin",
+    },
+    {
+      icon: <LoginIcon />,
+      name: "Login",
+      href: "/login",
+      showIf: () => !user,
+    },
+    {
+      icon: <LogoutIcon />,
+      name: "Logout",
+      onClick: async () => {
+        await logout();
+      },
+      showIf: () => !!user,
+    },
+  ];
+
+  // Get user role from context (default to 'user' if not set)
+  const userRole = user?.role || "user";
 
   // Filter actions based on role and showIf
   const filteredActions = actions.filter(
     (action) =>
       (!action.role || action.role === userRole) &&
-      (!action.showIf || action.showIf(userRole)),
+      (!action.showIf || action.showIf(user)),
   );
 
   return (

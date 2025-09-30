@@ -7,18 +7,18 @@ import { initLoadingVar } from "@gql/reactiveVar";
 
 const ProtectedRoute = ({ children, adminOnly = false }) => {
   const authenticated = isAuthenticated();
-  const admin = isAdmin()
-  // const user = useReactiveVar(currentUserVar); // Uncomment if you have this
+  const admin = isAdmin();
   const initLoading = useReactiveVar(initLoadingVar);
 
   if (initLoading) return null;
 
-  if (!authenticated) return <Navigate to="/login" replace />;
-
   if (adminOnly) {
+    if (!authenticated) return <Navigate to="/login" replace />;
     if (!admin && authenticated) return <Navigate to="/" replace />;
+    return children;
   }
 
+  // For non-admin routes, render children even if not authenticated
   return children;
 };
 

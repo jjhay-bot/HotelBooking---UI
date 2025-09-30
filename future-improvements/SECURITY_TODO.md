@@ -3,7 +3,7 @@
 A checklist of specific files and flows to improve for security and maintainability.
 
 ## 1. Authentication & Session Management
-- [ ] Move JWT and user role storage from sessionStorage to HTTP-only cookies (`useAuth.js`, `isAuthenticated.js`, `gql/client.js`, and all sessionStorage usage)
+- [✅] Move JWT and user role storage from sessionStorage to HTTP-only cookies (`useAuth.js`, `isAuthenticated.js`, `gql/client.js`, and all sessionStorage usage)
 - [ ] Centralize authentication logic to avoid duplication
 - [ ] Add token expiration checks and auto-logout
 
