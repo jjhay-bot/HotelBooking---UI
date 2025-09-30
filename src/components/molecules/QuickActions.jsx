@@ -31,8 +31,7 @@ const actions = [
     icon: <LogoutIcon />,
     name: "Logout",
     onClick: (navigate) => {
-      sessionStorage.removeItem("isAuthenticated");
-      sessionStorage.removeItem("userRole");
+      sessionStorage.clear();
       navigate("/login");
     },
     showIf: () => sessionStorage.getItem("isAuthenticated"),

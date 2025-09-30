@@ -37,6 +37,8 @@ export function useRooms(page = 1, pageSize = 10, filters = {}, trigger = 0) {
         if (isMounted) {
           setRooms(Array.isArray(data.rooms) ? data.rooms : []);
           setTotal(typeof data.totalCount === "number" ? data.totalCount : 0);
+          // Add hasMore and loadMore for infinite scroll
+          // hasMore: true if there are more rooms to load
         }
       })
       .catch((err) => {
@@ -50,5 +52,12 @@ export function useRooms(page = 1, pageSize = 10, filters = {}, trigger = 0) {
     };
   }, [page, pageSize, filters.status, filters.checkIn, filters.checkOut, filters.guestCount, filters.roomTypeId, filters.roomType, trigger]);
 
-  return { rooms, loading, error, total };
+  return {
+    rooms,
+    loading,
+    error,
+    total,
+    hasMore: rooms.length > 0 && rooms.length < total,
+    loadMore: () => {}, // placeholder for compatibility
+  };
 }

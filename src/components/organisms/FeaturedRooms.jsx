@@ -14,63 +14,38 @@ import { useTheme } from "@mui/material/styles";
 import { getRoomStatusStyle, getRoomStatusText, isRoomBookable } from "@/utils/roomUtils";
 import LocalHotelRoundedIcon from "@mui/icons-material/LocalHotelRounded";
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { LoadingState } from "../atoms/Spinner";
-import { useRooms } from "@/hooks/useRooms";
+import { useStaggeredRooms } from "@/hooks/useStaggeredRooms";
 import { motion } from "framer-motion";
 
 export function FeaturedRooms({ filters = {} }) {
   const theme = useTheme();
   const navigate = useNavigate();
-  const pageSize = 6;
-  const [page, setPage] = useState(1);
-  const [allRooms, setAllRooms] = useState([]);
-  const { rooms, loading, error, total } = useRooms(page, pageSize, filters);
+  const pageSize = 3;
+
+  const {
+    displayedRooms,
+    visibleCount,
+    loading,
+    error,
+    hasMore,
+    setPage,
+  } = useStaggeredRooms({ filters, pageSize });
   const [activeIndex, setActiveIndex] = useState(0);
-
-  // Append new rooms when page or filters change
-  useEffect(() => {
-    if (page === 1) {
-      setAllRooms(rooms);
-    } else if (rooms && rooms.length > 0) {
-      setAllRooms((prev) => {
-        // Only add rooms that are not already in prev (by id)
-        const prevIds = new Set(prev.map((r) => r.id));
-        const newRooms = rooms.filter((r) => !prevIds.has(r.id));
-        return [...prev, ...newRooms];
-      });
-    }
-  }, [rooms, page]);
-
-  // Reset on filter change
-  const filtersKey = JSON.stringify(filters);
-  useEffect(() => {
-    setPage(1);
-  }, [filtersKey]);
-
-  useEffect(() => {
-    setActiveIndex(0);
-  }, [allRooms]);
-
-  if (loading && page === 1)
-    return (
-      <>
-        <LoadingState />
-        <Typography>Loading rooms...</Typography>
-      </>
-    );
-
-  if (error) return <Typography color="error">{error}</Typography>;
 
   return (
     <Stack>
       <Typography variant="h3" pb={1.5}>
         Featured Rooms
       </Typography>
+      {loading && <LoadingState />}
+
+      {error && <Typography color="error">{error}</Typography>}
 
       <Grid container spacing={3}>
-        {allRooms?.map((r, ind) => (
-          <Grid key={ind} size={{ xs: 12, sm: 6, md: 4, lg: 4 }}>
+        {displayedRooms.slice(0, visibleCount).map((r, ind) => (
+          <Grid key={r.id} size={{ xs: 12, sm: 6, md: 4, lg: 4 }}>
             <Card
               sx={{ borderRadius: 6 }}
               tabIndex={0}
@@ -151,7 +126,8 @@ export function FeaturedRooms({ filters = {} }) {
           </Grid>
         ))}
       </Grid>
-      {allRooms.length < total && (
+
+      {hasMore && visibleCount >= displayedRooms.length && (
         <Button
           onClick={() => setPage((p) => p + 1)}
           disabled={loading}

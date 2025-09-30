@@ -9,6 +9,7 @@ import Room from "@/pages/Room";
 import Register from "@/pages/Register";
 import AdminDashboard from "@/pages/AdminDashboard.jsx";
 import ContactUs from "@/pages/ContactUs";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 const router = createBrowserRouter([
   // LANDING PAGE PER SERVICE
@@ -35,20 +36,20 @@ const router = createBrowserRouter([
   // ADMIN DASHBOARD ROUTES FOR TABBED NAVIGATION
   {
     path: "/admin/bookings",
-    element: <AdminDashboard />,
+    element: <ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>,
   },
   {
     path: "/admin/users",
-    element: <AdminDashboard />,
+    element: <ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>,
   },
   {
     path: "/admin/rooms",
-    element: <AdminDashboard />,
+    element: <ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>,
   },
   // Optionally keep the old dashboard route for backward compatibility
   {
     path: "/admin/dashboard",
-    element: <AdminDashboard />,
+    element: <ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>,
   },
   {
     path: "/test",
