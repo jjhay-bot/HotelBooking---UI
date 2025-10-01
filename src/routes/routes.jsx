@@ -11,6 +11,7 @@ import AdminDashboard from "@/pages/AdminDashboard.jsx";
 import ContactUs from "@/pages/ContactUs";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import SplashScreen from "@/components/SplashScreen";
+import UserRecords from "@/pages/UserRecords";
 
 const router = createBrowserRouter([
   // LANDING PAGE PER SERVICE
@@ -37,6 +38,10 @@ const router = createBrowserRouter([
   {
     path: "/contact",
     element: <ContactUs />,
+  },
+  {
+    path: "/user/records",
+    element: <UserRecords />
   },
   // ADMIN DASHBOARD ROUTES FOR TABBED NAVIGATION
   {

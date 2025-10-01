@@ -12,6 +12,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { Explore } from "@mui/icons-material";
+import AutoStoriesSharpIcon from '@mui/icons-material/AutoStoriesSharp';
 
 export default function QuickActions() {
   const [open, setOpen] = useState(false);
@@ -19,14 +20,18 @@ export default function QuickActions() {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
 
-  console.log('auth', { user, logout });
-  
 
   // Define actions inside the component to access user and logout
   const actions = [
-    { icon: <HomeIcon />, name: "Home", href: "/" },
+    {
+      icon: <AutoStoriesSharpIcon />,
+      name: "My Bookings",
+      href: "/user/records",
+      showIf: () => !!user,
+    },
     { icon: <Explore />, name: "Explore", href: "/explore" },
-    { icon: <LocalHotelRoundedIcon />, name: "Book Now", href: "/room/1" },
+    { icon: <HomeIcon />, name: "Welcome Banner", href: "/" },
+    // { icon: <LocalHotelRoundedIcon />, name: "Book Now", href: "/room/1" },
     { icon: <ContactMailIcon />, name: "Contact Us", href: "/contact" },
     {
       icon: <DashboardIcon />,

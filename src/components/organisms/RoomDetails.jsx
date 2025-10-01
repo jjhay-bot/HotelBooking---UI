@@ -71,6 +71,7 @@ export default function RoomDetails({ room }) {
     if (checkIn && checkOut && checkOut <= checkIn)
       newErrors.checkOut = "Check-out must be after check-in";
     setErrors(newErrors);
+
     if (Object.keys(newErrors).length > 0) return;
 
     const payload = {
@@ -92,6 +93,7 @@ export default function RoomDetails({ room }) {
           Authorization: `Bearer ${JWT_TOKEN}`,
         },
         body: JSON.stringify(payload),
+        credentials: "include",
       });
 
       if (!res.ok) {

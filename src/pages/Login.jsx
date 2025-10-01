@@ -75,7 +75,7 @@ export default function Login({ hideLinks = false, onSuccess }) {
       alignItems="center"
       sx={{ minHeight: "100%", p: 2 }}
     >
-      <Grid size={{ xs: 12, sm: 8, md: 6, lg: 4 }}>
+      <Grid size={{ xs: 12 }} sx={{ maxWidth: 400, width: "100%" }}>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
