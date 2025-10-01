@@ -19,6 +19,11 @@ import { useRoomTypes } from "@/hooks/useRoomTypes";
 import RotateLeftIcon from "@mui/icons-material/RotateLeft";
 
 export const FilterForm = ({ setFilters }) => {
+  // Helper to always include status: "available" if not present
+  const setFiltersWithStatus = (filters) => {
+    setFilters({ ...filters, status: "available" });
+  };
+
   const [checkIn, setCheckIn] = useState(null);
   const [checkOut, setCheckOut] = useState(null);
   const [guestCount, setGuestCount] = useState(2);
@@ -50,7 +55,7 @@ export const FilterForm = ({ setFilters }) => {
       return;
     }
     setPriceError("");
-    setFilters({
+    setFiltersWithStatus({
       checkIn: checkIn ? setTime(checkIn, 14).toISOString() : null,
       checkOut: checkOut ? setTime(checkOut, 12).toISOString() : null,
       guestCount,
@@ -68,7 +73,7 @@ export const FilterForm = ({ setFilters }) => {
     setSelectedRoomType("");
     setMinPrice("");
     setMaxPrice("");
-    setFilters({
+    setFiltersWithStatus({
       checkIn: null,
       checkOut: null,
       guestCount: 2,

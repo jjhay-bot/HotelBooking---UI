@@ -57,6 +57,12 @@ export function useStaggeredRooms({ filters = {}, pageSize = 6, staggerMs = 150 
     prevRoomsRef.current = displayedRooms;
   }, [displayedRooms, page, staggerMs]);
 
+  // Reset page and displayedRooms when filters change
+  useEffect(() => {
+    setPage(1);
+    setDisplayedRooms([]);
+  }, [filters]);
+
   const hasMore = displayedRooms.length < total;
 
   return {

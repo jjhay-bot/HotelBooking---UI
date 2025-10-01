@@ -16,13 +16,20 @@ export function Landing() {
 }
 
 const LandingPage = () => {
-  const [filters, setFilters] = useState({});
+  const [filters, setFilters] = useState({
+    status: "available",
+  });
+
+  // Always ensure status: "available" is present in filters
+  const setFiltersWithStatus = (newFilters) => {
+    setFilters({ ...newFilters, status: "available" });
+  };
 
   return (
     <Screen
       header={
         <Stack pt={2}>
-          <FilterForm filters={filters} setFilters={setFilters} />
+          <FilterForm filters={filters} setFilters={setFiltersWithStatus} />
         </Stack>
       }
     >

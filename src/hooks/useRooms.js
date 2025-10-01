@@ -60,6 +60,6 @@ export function useRooms(page = 1, pageSize = 10, filters = {}, trigger = 0) {
     error,
     total,
     hasMore: rooms.length > 0 && rooms.length < total,
-    loadMore: () => {}, // placeholder for compatibility
+    loadMore: () => { }, // placeholder for compatibility
   };
 }
