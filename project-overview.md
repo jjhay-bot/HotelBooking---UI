@@ -81,6 +81,7 @@ Summarize the project, its features, and your learning outcomes.
 
 ### Security & Safety Features
 - **Authentication (Login, Register, AuthProvider):** Ensures only authorized users can book or access admin features.
+- **JWT Authentication with HTTP-only Cookies:** Uses JSON Web Tokens stored in HTTP-only cookies for secure session management, protecting against XSS attacks and ensuring user credentials are never accessible via JavaScript.
 - **Protected Admin Routes (ProtectedRoute adminOnly):** Restricts admin pages to authorized users, protecting sensitive data.
 - **Error Boundary (ErrorBoundary):** Prevents app crashes and displays user-friendly error messages.
 - **NotFound Route:** Prevents exposure of internal routes and improves navigation safety.

@@ -6,12 +6,16 @@ import useUserBookings from "@/hooks/useUserBookings";
 import { dateFormat } from "@/utils/format/dateFormat";
 import { getRoomStatusStyle } from "@/utils/roomUtils";
 import { useTheme } from "@emotion/react";
-import { Chip } from "@mui/material";
+import { Button, Chip, Grid, Stack, Typography } from "@mui/material";
 import { lowerCase } from "lodash";
+import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 export default function UserRecords() {
   const { user } = useAuth();
   const theme = useTheme();
+  const navigate = useNavigate();
+
   const { bookings, loading, error } = useUserBookings(user?.id);
 
   const columns = [
@@ -47,6 +51,33 @@ export default function UserRecords() {
       <LoadingState loading={loading} />
       {error && <p style={{ color: "red" }}>{error}</p>}
       <DataTable rows={bookings} columns={columns} />
+      {
+        !loading && bookings?.length === 0 &&
+        <Grid container justifyContent="center" alignItems="center" flexDirection="column" my={4}>
+          <Typography variant="body2" color="text.secondary" p={2}>
+            No bookings found. Hurry up and make your first booking!
+          </Typography>
+
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0, scale: [1, 1.06, 1] }}
+            transition={{
+              opacity: { duration: 1, delay: 1, ease: "easeOut" },
+              // y: { duration: 1, delay: 1, ease: "easeOut" },
+              scale: { duration: 1.2, repeat: Infinity, repeatType: "reverse", ease: "easeInOut" }
+            }}
+            whileHover={{ scale: 1.12, }}
+            whileTap={{ scale: 0.97 }}
+            style={{ marginTop: 32 }}
+          >
+            <Button variant="contained"
+              onClick={() => navigate('/explore')}
+            >
+              Explore available rooms
+            </Button>
+          </motion.div>
+        </Grid>
+      }
     </Screen>
   );
 }
