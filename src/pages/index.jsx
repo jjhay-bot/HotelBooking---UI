@@ -6,3 +6,4 @@ export { default as NotFound } from './NotFound';
 export { default as Register } from './Register';
 export { default as Room } from './Room';
 export { default as RoomDetailsPage } from './RoomDetailsPage';
+export { default as UserRecords } from './UserRecords';

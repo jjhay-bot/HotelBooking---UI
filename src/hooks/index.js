@@ -8,4 +8,5 @@ export { useRoom } from './useRoom';
 export { useRoomTypes } from './useRoomTypes';
 export { useRooms } from './useRooms';
 export { useStaggeredRooms } from './useStaggeredRooms';
+export { default as useUserBookings } from './useUserBookings';
 export { default as useUsers } from './useUsers';

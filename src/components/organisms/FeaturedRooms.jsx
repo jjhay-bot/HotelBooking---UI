@@ -87,26 +87,34 @@ export function FeaturedRooms({ filters = {} }) {
                     {r.description}
                   </Typography>
 
-                  <Box display="flex" justifyContent="space-between" alignItems="center">
-                    <Stack direction="row" spacing={1} alignItems="center">
+                  <Grid container alignItems="center" spacing={1.5}>
+                    <Stack direction="row" spacing={1} alignItems="center" >
                       <PeopleIcon fontSize="small" color="action" />
+
                       <Typography variant="body2" color="text.secondary">
                         Up to {r.capacity} guests
                       </Typography>
                       {r.size && (
                         <>
                           <span style={{ margin: "0 8px", color: "#bdbdbd" }}>|</span>
-                          <Typography variant="body2" color="text.secondary">
+                          <Typography variant="body2" color="text.secondary" >
                             {r.size}
                           </Typography>
                         </>
                       )}
                     </Stack>
 
-                    <Typography variant="h6" color="primary.main" fontWeight="bold">
-                      ${r.pricePerNight}/night
-                    </Typography>
-                  </Box>
+                    <Grid
+                      container
+                      justifyContent="end"
+                      alignItems="center"
+                      width='100%'
+                    >
+                      <Typography variant="h6" color="primary.main" fontWeight="bold">
+                        ${r.pricePerNight}/night
+                      </Typography>
+                    </Grid>
+                  </Grid>
 
                   <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                     <Button
@@ -114,7 +122,6 @@ export function FeaturedRooms({ filters = {} }) {
                       startIcon={<LocalHotelRoundedIcon fontSize="8px" />}
                       fullWidth
                       disabled={!isRoomBookable(r.status)}
-                      sx={{ mt: 2 }}
                       onClick={() => navigate(`/room/${r.id}`)}
                     >
                       {getRoomStatusText(r.status)}
