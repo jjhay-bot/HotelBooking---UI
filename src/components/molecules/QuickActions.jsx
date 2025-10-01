@@ -12,18 +12,14 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { Explore } from "@mui/icons-material";
-import { isAdmin } from "@/utils/isAuthenticated";
 
 export default function QuickActions() {
   const [open, setOpen] = useState(false);
   const handleToggle = () => setOpen((prev) => !prev);
   const navigate = useNavigate();
-  const auth = useAuth() || {};
-  const user = auth.user;
-  const admin = isAdmin()
-  const logout = auth.logout || (() => { });
+  const { user, logout } = useAuth();
 
-  console.log('auth', auth);
+  console.log('auth', { user, logout });
   
 
   // Define actions inside the component to access user and logout
@@ -36,7 +32,7 @@ export default function QuickActions() {
       icon: <DashboardIcon />,
       name: "Admin Dashboard",
       href: "/admin/dashboard",
-      showIf: () => admin,
+      showIf: () => user?.role?.toLowerCase() === "admin",
     },
     {
       icon: <LoginIcon />,
@@ -54,14 +50,9 @@ export default function QuickActions() {
     },
   ];
 
-  // Get user role from context (default to 'user' if not set)
-  const userRole = user?.role || "user";
-
-  // Filter actions based on role and showIf
+  // Filter actions based on showIf conditions
   const filteredActions = actions.filter(
-    (action) =>
-      (!action.role || action.role === userRole) &&
-      (!action.showIf || action.showIf(user)),
+    (action) => !action.showIf || action.showIf(),
   );
 
   return (

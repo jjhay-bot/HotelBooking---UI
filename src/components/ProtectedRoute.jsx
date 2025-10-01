@@ -1,16 +1,18 @@
 import { Navigate } from "react-router-dom";
-import { isAdmin, isAuthenticated } from "../utils/isAuthenticated";
-// You may have a user context or similar; adjust as needed
 import { useReactiveVar } from "@apollo/client";
 import { initLoadingVar } from "@gql/reactiveVar";
-// import { currentUserVar } from "@gql/reactiveVar"; // Example if you have a user var
+import { useAuth } from "@/context/AuthContext";
 
 const ProtectedRoute = ({ children, adminOnly = false }) => {
-  const authenticated = isAuthenticated();
-  const admin = isAdmin();
-  const initLoading = useReactiveVar(initLoadingVar);
+  const auth = useAuth();
+  const { user, loading } = auth || {};
+  const initLoading = useReactiveVar(initLoadingVar);  
 
-  if (initLoading) return null;
+  // Show loading while auth state is being determined or if auth context is not available
+  if (!auth || loading || initLoading) return null;
+
+  const authenticated = !!user;
+  const admin = user?.role?.toLowerCase() === "admin";
 
   if (adminOnly) {
     if (!authenticated) return <Navigate to="/login" replace />;

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Box, Typography, useTheme, Button } from "@mui/material";
+import { Box, Typography, useTheme, Button, Grid } from "@mui/material";
 import { motion } from "framer-motion";
 import AutoStoriesSharpIcon from '@mui/icons-material/AutoStoriesSharp';
 import { useNavigate } from 'react-router-dom';
@@ -247,22 +247,7 @@ const SplashScreen = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 1, ease: "easeOut" }}
           >
-            <Typography
-              variant="h2"
-              sx={{
-                color: gold,
-                fontFamily: 'Playfair Display, serif',
-                fontWeight: 700,
-                letterSpacing: 3,
-                mb: 1,
-                textShadow: `0 4px 16px ${gold}66, 0 2px 8px ${bg}88`,
-                background: `linear-gradient(135deg, ${gold} 0%, ${blue} 100%)`,
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-              }}
-              gutterBottom
-            >
+            <Typography variant="logo" color="#706b3b">
               Bedder Deals
             </Typography>
           </motion.div>
@@ -337,7 +322,7 @@ const SplashScreen = () => {
           sx={{
             px: 6,
             py: 1.5,
-            fontSize: 18,
+            fontSize: { xs: 14, sm: 16 },
             fontWeight: 600,
             borderRadius: 8,
             boxShadow: `0 2px 12px ${gold}33`,

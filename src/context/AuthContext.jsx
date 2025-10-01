@@ -1,16 +1,19 @@
-import { createContext, useContext, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { createContext, useContext, useState, useEffect, useCallback } from "react";
 import env from "@/constants/env";
+import { se } from "date-fns/locale";
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   // Refresh token function
-  const refreshToken = async () => {
+  const refreshToken = useCallback(async () => {
+    // Don't refresh during logout
+    if (isLoggingOut) return false;
+
     try {
       const res = await fetch(`${env.API_URI}/api/v1/auth/refresh`, {
         method: "POST",
@@ -24,13 +27,40 @@ export function AuthProvider({ children }) {
       setUser(null);
       return false;
     }
-  };
+  }, [isLoggingOut]);
 
   // Check auth state on mount
   useEffect(() => {
+    // Don't check auth status if we're logging out or if logout was just completed
+    const justLoggedOut = localStorage.getItem('justLoggedOut');
+    if (isLoggingOut || justLoggedOut) {
+      if (justLoggedOut) {
+        localStorage.removeItem('justLoggedOut');
+        setUser(null);
+        setLoading(false);
+      }
+      return;
+    }
+
     async function fetchMe() {
       setLoading(true);
+
       try {
+        // skip /me for local dev ONLY
+        if (env.STAGE === 'local') {
+          setUser({
+            "id": 12,
+            "email": "admin@gm.com",
+            "role": "Admin",
+            "firstName": "admin",
+            "lastName": "jhay",
+            "age": 30,
+            "isActive": true
+          })
+          setLoading(false);
+          return
+        }
+
         const res = await fetch(`${env.API_URI}/api/v1/auth/me`, {
           credentials: "include",
         });
@@ -38,9 +68,8 @@ export function AuthProvider({ children }) {
           const data = await res.json();
           setUser(data.user || data);
         } else if (res.status === 401) {
-          // Try to refresh token if unauthorized
-          const refreshed = await refreshToken();
-          if (!refreshed) setUser(null);
+          // Do not call refreshToken if /me returns 401
+          setUser(null);
         } else {
           setUser(null);
         }
@@ -51,7 +80,7 @@ export function AuthProvider({ children }) {
       }
     }
     fetchMe();
-  }, []);
+  }, [refreshToken, isLoggingOut]);
 
   // Login function
   const login = async (formData) => {
@@ -63,10 +92,10 @@ export function AuthProvider({ children }) {
         body: JSON.stringify(formData),
         credentials: "include",
       });
+
       if (!res.ok) throw new Error("Login failed");
       const data = await res.json();
       setUser(data.user || data);
-      navigate("/");
       return true;
     } catch {
       setUser(null);
@@ -78,18 +107,26 @@ export function AuthProvider({ children }) {
 
   // Logout function
   const logout = async () => {
+    setIsLoggingOut(true);
     setLoading(true);
     try {
       await fetch(`${env.API_URI}/api/v1/auth/logout`, {
         method: "POST",
         credentials: "include",
       });
-
+    } catch (error) {
+      console.error("Logout API call failed:", error);
     } finally {
+      // Clear any remaining session data
       sessionStorage.clear();
+      localStorage.clear();
       setUser(null);
       setLoading(false);
-      navigate("/login");
+      setIsLoggingOut(false);
+      // Use a small delay before redirect to ensure state is set
+      setTimeout(() => {
+        window.location.replace("/login");
+      }, 100);
     }
   };
 

@@ -39,15 +39,15 @@ export default function AdminDashboard() {
           indicatorColor="secondary"
           aria-label="active tab"
         >
-          <Tab value={0} label="Bookings" />
-          <Tab value={1} label="Users" />
-          <Tab value={2} label="Rooms" />
+          <Tab value={0} label="Rooms" />
+          <Tab value={1} label="Bookings" />
+          <Tab value={2} label="Users" />
         </Tabs>
       </Grid>
 
-      {activeTab === 0 && <BookingsTable />}
-      {activeTab === 1 && <UserTable />}
-      {activeTab === 2 && <RoomTable />}
+      {activeTab === 0 && <RoomTable />}
+      {activeTab === 1 && <BookingsTable />}
+      {activeTab === 2 && <UserTable />}
     </Screen>
   );
 }

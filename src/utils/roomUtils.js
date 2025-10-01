@@ -16,6 +16,11 @@ export const getRoomStatusStyle = (status, theme) => {
         ...baseStyle,
         background: `linear-gradient(45deg, ${color.green}ee, ${color.green}88)`, // Green gradient
       };
+    case 'confirmed':
+      return {
+        ...baseStyle,
+        background: `linear-gradient(45deg, ${color.mid}ee, ${color.mid}88)`, // Green gradient
+      };
     case 'occupied':
       return {
         ...baseStyle,
@@ -24,7 +29,12 @@ export const getRoomStatusStyle = (status, theme) => {
     case 'maintenance':
       return {
         ...baseStyle,
-        background: `linear-gradient(45deg, ${theme.palette.secondary.main}cc, ${theme.palette.secondary.main}66)`, // Secondary gradient
+        background: `linear-gradient(45deg, ${color.low}cc, ${color.low}66)`,
+      };
+    case 'reserved':
+      return {
+        ...baseStyle,
+        background: `linear-gradient(45deg, ${color.red}cc, ${color.red}66)`,
       };
     default:
       return baseStyle;

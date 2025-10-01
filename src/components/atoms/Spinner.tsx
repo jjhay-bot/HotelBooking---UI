@@ -13,7 +13,9 @@ export default function Spinner() {
 }
 
 
-export const LoadingState = () => {
+export const LoadingState = ({ loading = true }) => {
+  if (!loading) return null;
+
   return <Stack
     sx={{
       position: 'fixed',
