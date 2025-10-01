@@ -20,6 +20,7 @@ export default function QuickActions() {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
 
+  console.log('user', user);
 
   // Define actions inside the component to access user and logout
   const actions = [
@@ -27,7 +28,7 @@ export default function QuickActions() {
       icon: <AutoStoriesSharpIcon />,
       name: "My Bookings",
       href: "/user/records",
-      showIf: () => !!user,
+      showIf: () => user?.role?.toLowerCase() === "user",
     },
     { icon: <Explore />, name: "Explore", href: "/explore" },
     { icon: <HomeIcon />, name: "Welcome Banner", href: "/" },
