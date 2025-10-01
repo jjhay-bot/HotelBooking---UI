@@ -22,7 +22,7 @@ import { motion } from "framer-motion";
 export function FeaturedRooms({ filters = {} }) {
   const theme = useTheme();
   const navigate = useNavigate();
-  const pageSize = 3;
+  const pageSize = 6;
 
   const {
     displayedRooms,

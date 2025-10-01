@@ -24,6 +24,8 @@ export function useRooms(page = 1, pageSize = 10, filters = {}, trigger = 0) {
       // Only append roomType if roomTypeId is not present
       params.append("roomTypeId", filters.roomType); // treat legacy roomType as roomTypeId
     }
+    if (filters.minPrice != null) params.append("minPrice", filters.minPrice);
+    if (filters.maxPrice != null) params.append("maxPrice", filters.maxPrice);
 
     const token = sessionStorage.getItem("jwt");
     fetch(`${env.API_URI}/api/v1/rooms?${params.toString()}`, {
@@ -50,7 +52,7 @@ export function useRooms(page = 1, pageSize = 10, filters = {}, trigger = 0) {
     return () => {
       isMounted = false;
     };
-  }, [page, pageSize, filters.status, filters.checkIn, filters.checkOut, filters.guestCount, filters.roomTypeId, filters.roomType, trigger]);
+  }, [page, pageSize, filters.status, filters.checkIn, filters.checkOut, filters.guestCount, filters.roomTypeId, filters.roomType, filters.minPrice, filters.maxPrice, trigger]);
 
   return {
     rooms,

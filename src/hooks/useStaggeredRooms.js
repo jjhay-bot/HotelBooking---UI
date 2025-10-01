@@ -5,7 +5,7 @@ import { useRooms } from "@/hooks/useRooms";
  * Custom hook for paginated, accumulated, and staggered room display.
  * Keeps useRooms generic for other consumers (e.g., admin dashboard).
  */
-export function useStaggeredRooms({ filters = {}, pageSize = 3, staggerMs = 150 }) {
+export function useStaggeredRooms({ filters = {}, pageSize = 6, staggerMs = 150 }) {
   const [page, setPage] = useState(1);
   const { rooms, loading, error, total } = useRooms(page, pageSize, filters);
   const [displayedRooms, setDisplayedRooms] = useState([]);

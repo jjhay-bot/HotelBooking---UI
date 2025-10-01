@@ -68,7 +68,7 @@ export function FacebookCircularProgress(props) {
         }}
         size={60}
         thickness={5}
-        color='secondary'
+        // color='secondary'
         {...props}
       />
     </Box>

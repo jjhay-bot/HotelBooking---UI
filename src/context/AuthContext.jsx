@@ -84,7 +84,9 @@ export function AuthProvider({ children }) {
         method: "POST",
         credentials: "include",
       });
+
     } finally {
+      sessionStorage.clear();
       setUser(null);
       setLoading(false);
       navigate("/login");

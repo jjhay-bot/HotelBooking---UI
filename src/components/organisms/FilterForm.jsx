@@ -24,6 +24,9 @@ export const FilterForm = ({ setFilters }) => {
   const [guestCount, setGuestCount] = useState(2);
   const [selectedRoomType, setSelectedRoomType] = useState("");
   const [collapsed, setCollapsed] = useState(false);
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
+  const [priceError, setPriceError] = useState("");
 
   const { roomTypes, loading: loadingRoomTypes } = useRoomTypes();
 
@@ -36,11 +39,24 @@ export const FilterForm = ({ setFilters }) => {
   };
 
   const handleSearch = () => {
+    if (
+      minPrice !== null &&
+      maxPrice !== null &&
+      minPrice !== "" &&
+      maxPrice !== "" &&
+      Number(maxPrice) < Number(minPrice)
+    ) {
+      setPriceError("Max Price must be greater than or equal to Min Price");
+      return;
+    }
+    setPriceError("");
     setFilters({
-      checkIn: checkIn ? setTime(checkIn, 14).toISOString() : null, // 14:00:00Z
-      checkOut: checkOut ? setTime(checkOut, 12).toISOString() : null, // 12:00:00Z
+      checkIn: checkIn ? setTime(checkIn, 14).toISOString() : null,
+      checkOut: checkOut ? setTime(checkOut, 12).toISOString() : null,
       guestCount,
-      roomTypeId: selectedRoomType, // should be ID from roomTypes
+      roomTypeId: selectedRoomType,
+      minPrice: minPrice !== null && minPrice !== "" ? Number(minPrice) : null,
+      maxPrice: maxPrice !== null && maxPrice !== "" ? Number(maxPrice) : null,
     });
     setCollapsed(false);
   };
@@ -48,13 +64,17 @@ export const FilterForm = ({ setFilters }) => {
   const handleReset = () => {
     setCheckIn(null);
     setCheckOut(null);
-    setGuestCount(1);
+    setGuestCount(2);
     setSelectedRoomType("");
+    setMinPrice("");
+    setMaxPrice("");
     setFilters({
       checkIn: null,
       checkOut: null,
-      guestCount: 1,
+      guestCount: 2,
       roomTypeId: "",
+      minPrice: null,
+      maxPrice: null,
     });
   };
 
@@ -77,11 +97,7 @@ export const FilterForm = ({ setFilters }) => {
                 </Grid>
 
                 <Grid size={{ xs: 12, sm: 4, lg: 3 }}>
-                  <DatePick
-                    label="Check-out Date"
-                    value={checkOut}
-                    onChange={setCheckOut}
-                  />
+                  <DatePick label="Check-out Date" value={checkOut} onChange={setCheckOut} />
                 </Grid>
 
                 <Grid size={{ xs: 12, sm: 4, lg: 3 }}>
@@ -90,8 +106,9 @@ export const FilterForm = ({ setFilters }) => {
                     name="guestCount"
                     type="number"
                     value={guestCount}
-                    onChange={(e) => setGuestCount(Number(e.target.value))}
-                    inputProps={{ min: 1 }}
+                    onChange={(e) => setGuestCount(Math.abs(e.target.value))}
+                  // slotProps={{ input: { min: 2 } }}
+
                   />
                 </Grid>
 
@@ -111,6 +128,38 @@ export const FilterForm = ({ setFilters }) => {
                       ))}
                     </Select>
                   </FormControl>
+                </Grid>
+
+                {/* Price Filter */}
+                <Grid size={{ xs: 6, sm: 4, lg: 1.5 }}>
+                  <FormTextField
+                    name="minPrice"
+                    type="number"
+                    label="Min Price"
+                    value={minPrice}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setMinPrice(val === "" ? null : Math.abs(Number(val)));
+                    }}
+                    slotProps={{ input: { min: 0 } }}
+                    error={!!priceError}
+                  />
+                </Grid>
+
+                <Grid size={{ xs: 6, sm: 4, lg: 1.5 }}>
+                  <FormTextField
+                    name="maxPrice"
+                    type="number"
+                    label="Max Price"
+                    value={maxPrice}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setMaxPrice(val === "" ? null : Math.abs(Number(val)));
+                    }}
+                    slotProps={{ input: { min: 0 } }}
+                    error={!!priceError}
+                    helperText={priceError}
+                  />
                 </Grid>
 
                 <Grid

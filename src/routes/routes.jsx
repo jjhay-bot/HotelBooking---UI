@@ -10,12 +10,17 @@ import Register from "@/pages/Register";
 import AdminDashboard from "@/pages/AdminDashboard.jsx";
 import ContactUs from "@/pages/ContactUs";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import SplashScreen from "@/components/SplashScreen";
 
 const router = createBrowserRouter([
   // LANDING PAGE PER SERVICE
   {
-    path: "/",
+    path: "/explore",
     element: <Landing />,
+  },
+  {
+    path: "/",
+    element: <SplashScreen />,
   },
   {
     path: "/room/:id",

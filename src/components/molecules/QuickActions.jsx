@@ -11,6 +11,8 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
+import { Explore } from "@mui/icons-material";
+import { isAdmin } from "@/utils/isAuthenticated";
 
 export default function QuickActions() {
   const [open, setOpen] = useState(false);
@@ -18,18 +20,23 @@ export default function QuickActions() {
   const navigate = useNavigate();
   const auth = useAuth() || {};
   const user = auth.user;
-  const logout = auth.logout || (() => {});
+  const admin = isAdmin()
+  const logout = auth.logout || (() => { });
+
+  console.log('auth', auth);
+  
 
   // Define actions inside the component to access user and logout
   const actions = [
     { icon: <HomeIcon />, name: "Home", href: "/" },
+    { icon: <Explore />, name: "Explore", href: "/explore" },
     { icon: <LocalHotelRoundedIcon />, name: "Book Now", href: "/room/1" },
     { icon: <ContactMailIcon />, name: "Contact Us", href: "/contact" },
     {
       icon: <DashboardIcon />,
       name: "Admin Dashboard",
       href: "/admin/dashboard",
-      role: "admin",
+      showIf: () => admin,
     },
     {
       icon: <LoginIcon />,
