@@ -47,7 +47,7 @@ export function AuthProvider({ children }) {
 
       try {
         // skip /me for local dev ONLY
-        if (env.STAGE === 'local') {
+        if (env.STAGE === 'local2') {
           setUser({
             "id": 12,
             "email": "admin@gm.com",

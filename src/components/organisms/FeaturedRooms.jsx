@@ -18,6 +18,7 @@ import { useState } from "react";
 import { LoadingState } from "../atoms/Spinner";
 import { useStaggeredRooms } from "@/hooks/useStaggeredRooms";
 import { motion } from "framer-motion";
+import { lowerCase } from "lodash";
 
 export function FeaturedRooms({ filters = {} }) {
   const theme = useTheme();
@@ -70,7 +71,7 @@ export function FeaturedRooms({ filters = {} }) {
                     <Chip
                       label={r.status}
                       size="small"
-                      sx={getRoomStatusStyle(r.status, theme)}
+                      sx={getRoomStatusStyle(lowerCase(r.status), theme)}
                     />
                   </Box>
 

@@ -37,7 +37,10 @@ export const getRoomStatusStyle = (status, theme) => {
         background: `linear-gradient(45deg, ${color.red}cc, ${color.red}66)`,
       };
     default:
-      return baseStyle;
+      return {
+        ...baseStyle,
+        background: `linear-gradient(45deg, ${color.low}ee, ${color.low}88)`, // Green gradient
+      };
   }
 };
 

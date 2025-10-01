@@ -1,3 +1,15 @@
+# Hotel Booking System Web Application
+
+## Project Repositories
+
+- **Frontend (UI):** [https://github.com/jjhay-bot/HotelBooking---UI](https://github.com/jjhay-bot/HotelBooking---UI)
+- **Backend (API):** [https://github.com/jjhay-bot/HotelBokingAPI](https://github.com/jjhay-bot/HotelBokingAPI)
+
+## Deployed URLs
+
+- **API Health Endpoint:** [https://hotelbookingapi-bpfkd9d4amdhbea9.southeastasia-01.azurewebsites.net/health](https://hotelbookingapi-bpfkd9d4amdhbea9.southeastasia-01.azurewebsites.net/health)
+- **Frontend (UI):** [https://bedderdeals.fun-at.work/](https://bedderdeals.fun-at.work/)
+
 ## Developer Notes
 
 - Install **[Run on save]([https://marketplace.visualstudio.com/items?itemName=emeraldwalk.RunOnSave]())** (optional)

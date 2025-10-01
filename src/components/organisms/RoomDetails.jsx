@@ -35,6 +35,7 @@ import LocationNearby from "@/components/organisms/LocationNearby";
 import { env } from "@/constants";
 import { onError, onSuccess } from "@/gql/uiActions";
 import { Login } from "@/pages";
+import { lowerCase } from "lodash";
 
 export default function RoomDetails({ room }) {
   const theme = useTheme();
@@ -190,7 +191,7 @@ export default function RoomDetails({ room }) {
                     <Chip
                       label={room.status}
                       size="small"
-                      sx={getRoomStatusStyle(room.status, theme)}
+                      sx={getRoomStatusStyle(lowerCase(room.status), theme)}
                     />
                   </Box>
 
