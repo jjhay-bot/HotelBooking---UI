@@ -1,6 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback } from "react";
 import env from "@/constants/env";
-import { se } from "date-fns/locale";
 
 const AuthContext = createContext();
 
@@ -29,6 +28,35 @@ export function AuthProvider({ children }) {
     }
   }, [isLoggingOut]);
 
+  // Helper to fetch user info after login
+  const fetchMe = async () => {
+    setLoading(true);
+    try {
+      // skip /me for local dev ONLY
+      if (env.STAGE === 'local2') {
+        setUser({
+          "role": "guest",
+        })
+        setLoading(false);
+        return
+      }
+
+      const res = await fetch(`${env.API_URI}/api/v1/auth/me`, {
+        credentials: 'include',
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setUser(data.user || data);
+      } else {
+        setUser(null);
+      }
+    } catch {
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Check auth state on mount
   useEffect(() => {
     // Don't check auth status if we're logging out or if logout was just completed
@@ -42,24 +70,18 @@ export function AuthProvider({ children }) {
       return;
     }
 
-    async function fetchMe() {
+    async function initialFetchMe() {
       setLoading(true);
 
       try {
         // skip /me for local dev ONLY
-        if (env.STAGE === 'local2') {
-          setUser({
-            "id": 12,
-            "email": "admin@gm.com",
-            "role": "Admin",
-            "firstName": "admin",
-            "lastName": "jhay",
-            "age": 30,
-            "isActive": true
-          })
-          setLoading(false);
-          return
-        }
+        // if (env.STAGE === 'local') {
+        //   setUser({
+        //     "role": "guest",
+        //   })
+        //   setLoading(false);
+        //   return
+        // }
 
         const res = await fetch(`${env.API_URI}/api/v1/auth/me`, {
           credentials: "include",
@@ -79,7 +101,7 @@ export function AuthProvider({ children }) {
         setLoading(false);
       }
     }
-    fetchMe();
+    initialFetchMe();
   }, [refreshToken, isLoggingOut]);
 
   // Login function
@@ -94,8 +116,7 @@ export function AuthProvider({ children }) {
       });
 
       if (!res.ok) throw new Error("Login failed");
-      const data = await res.json();
-      setUser(data.user || data);
+      await fetchMe(); // <-- fetch user info after login
       return true;
     } catch {
       setUser(null);
@@ -106,7 +127,7 @@ export function AuthProvider({ children }) {
   };
 
   // Logout function
-  const logout = async () => {
+  const logout = async (navigateFn) => {
     setIsLoggingOut(true);
     setLoading(true);
     try {
@@ -123,15 +144,13 @@ export function AuthProvider({ children }) {
       setUser(null);
       setLoading(false);
       setIsLoggingOut(false);
-      // Use a small delay before redirect to ensure state is set
-      setTimeout(() => {
-        window.location.replace("/login");
-      }, 100);
+      // Use navigate function from component
+      if (navigateFn) navigateFn("/login", { replace: true });
     }
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, refreshToken }}>
+    <AuthContext.Provider value={{ user, loading, login, logout, refreshToken, fetchMe }}>
       {children}
     </AuthContext.Provider>
   );

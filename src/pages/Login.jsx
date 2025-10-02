@@ -17,6 +17,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import LockIcon from "@mui/icons-material/Lock";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { useEffect } from "react";
 
 export default function Login({ hideLinks = false, onSuccess }) {
   const [formData, setFormData] = useState({
@@ -26,7 +27,7 @@ export default function Login({ hideLinks = false, onSuccess }) {
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
 
-  const { login } = useAuth();
+  const { login, user } = useAuth();
   const navigate = useNavigate();
 
   const handleInputChange = (field) => (event) => {
@@ -67,6 +68,14 @@ export default function Login({ hideLinks = false, onSuccess }) {
     // Call login and navigate based on role
     await login(formData, onSuccess);
   };
+
+  useEffect(() => {
+    if (user?.role?.match(/admin/gi)) {
+      navigate("/admin/dashboard");
+    } else if (user) {
+      navigate("/");
+    }
+  }, [user, navigate]);
 
   return (
     <Grid

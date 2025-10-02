@@ -2,12 +2,15 @@ import { onError, onSuccess as onSuccessNotif } from "@/gql/uiActions";
 import { useNavigate } from "react-router-dom";
 import env from "@/constants/env";
 import { lowerCase } from "lodash";
+import { useAuth as useAuthContext } from "@/context/AuthContext";
 
 export function useAuth() {
+  // Use context for user, login, register, etc.
+  const { user, loading, logout, refreshToken, fetchMe } = useAuthContext();
   const navigate = useNavigate();
 
   // Login using API
-  const login = async (formData, onSuccess) => {
+  const loginHandler = async (formData, onSuccess) => {
     try {
       const res = await fetch(`${env.API_URI}/api/v1/auth/login`, {
         method: "POST",
@@ -28,24 +31,18 @@ export function useAuth() {
       const data = await res.json();
       const user = data.user || data; // Adjust if API shape is different
       // Set session (optional)
-      console.log("user", user);
-
       if (data.token) {
         sessionStorage.setItem("jwt", data.token);
       }
       sessionStorage.setItem("isAuthenticated", "true");
       sessionStorage.setItem("userRole", lowerCase(user.role));
-      // Navigate based on role
+      // Always refresh context user after login
+      await fetchMe();
       if (onSuccess) {
         onSuccess();
         return;
       }
-      onSuccessNotif("Login successful!");
-      if (lowerCase(user.role) === "admin") {
-        navigate("/admin/dashboard");
-      } else {
-        navigate("/");
-      }
+      await onSuccessNotif("Login successful!");
       return user;
     } catch (err) {
       return onError(err.message || "Network error. Please try again.");
@@ -83,5 +80,5 @@ export function useAuth() {
     }
   };
 
-  return { login, register };
+  return { user, loading, login: loginHandler, logout, refreshToken, fetchMe, register };
 }

@@ -44,7 +44,7 @@ export default function QuickActions() {
       icon: <LoginIcon />,
       name: "Login",
       href: "/login",
-      showIf: () => !user,
+      showIf: () => user?.role.match(/guest/) || !user
     },
     {
       icon: <LogoutIcon />,
@@ -52,7 +52,7 @@ export default function QuickActions() {
       onClick: async () => {
         await logout();
       },
-      showIf: () => !!user,
+      showIf: () => user?.role.match(/admin|user/gi)
     },
   ];
 
