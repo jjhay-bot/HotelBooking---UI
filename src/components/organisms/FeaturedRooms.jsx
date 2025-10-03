@@ -42,6 +42,8 @@ export function FeaturedRooms({ filters = {} }) {
       </Typography>
       {loading && <LoadingState />}
 
+      {(!loading && !displayedRooms.length) && 'No rooms found based on the selected filters.'}
+
       {error && <Typography color="error">{error}</Typography>}
 
       <Grid container spacing={3}>

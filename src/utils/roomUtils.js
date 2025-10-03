@@ -1,4 +1,5 @@
 import { color } from "@/constants";
+import { lowerCase } from "lodash";
 
 export const getRoomStatusStyle = (status, theme) => {
   const baseStyle = {
@@ -45,7 +46,7 @@ export const getRoomStatusStyle = (status, theme) => {
 };
 
 export const getRoomStatusText = (status) => {
-  switch (status) {
+  switch (lowerCase(status)) {
     case 'available':
       return 'Book Now!';
     case 'occupied':
@@ -58,5 +59,5 @@ export const getRoomStatusText = (status) => {
 };
 
 export const isRoomBookable = (status) => {
-  return status === 'available';
+  return lowerCase(status) === 'available';
 };

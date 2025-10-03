@@ -20,7 +20,7 @@ import RotateLeftIcon from "@mui/icons-material/RotateLeft";
 
 export const FilterForm = ({ setFilters }) => {
   const setFiltersWithStatus = (filters) => {
-    setFilters({ ...filters});
+    setFilters({ ...filters });
   };
 
   const [checkIn, setCheckIn] = useState(null);
@@ -80,6 +80,7 @@ export const FilterForm = ({ setFilters }) => {
       minPrice: null,
       maxPrice: null,
     });
+    setCollapsed(false);
   };
 
   return (
