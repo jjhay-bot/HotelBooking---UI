@@ -19,9 +19,8 @@ import { useRoomTypes } from "@/hooks/useRoomTypes";
 import RotateLeftIcon from "@mui/icons-material/RotateLeft";
 
 export const FilterForm = ({ setFilters }) => {
-  // Helper to always include status: "available" if not present
   const setFiltersWithStatus = (filters) => {
-    setFilters({ ...filters, status: "available" });
+    setFilters({ ...filters});
   };
 
   const [checkIn, setCheckIn] = useState(null);
@@ -113,7 +112,6 @@ export const FilterForm = ({ setFilters }) => {
                     value={guestCount}
                     onChange={(e) => setGuestCount(Math.abs(e.target.value))}
                   // slotProps={{ input: { min: 2 } }}
-
                   />
                 </Grid>
 

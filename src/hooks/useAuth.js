@@ -1,43 +1,17 @@
 import { onError, onSuccess as onSuccessNotif } from "@/gql/uiActions";
 import { useNavigate } from "react-router-dom";
 import env from "@/constants/env";
-import { lowerCase } from "lodash";
 import { useAuth as useAuthContext } from "@/context/AuthContext";
 
 export function useAuth() {
   // Use context for user, login, register, etc.
-  const { user, loading, logout, refreshToken, fetchMe } = useAuthContext();
+  const { user, loading, login, logout, refreshToken, fetchMe } = useAuthContext();
   const navigate = useNavigate();
 
-  // Login using API
+  // Login using context
   const loginHandler = async (formData, onSuccess) => {
     try {
-      const res = await fetch(`${env.API_URI}/api/v1/auth/login`, {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password,
-        }),
-        credentials: "include", // Accept and send cookies for authentication
-      });
-      if (!res.ok) {
-        const errorData = await res.json();
-        return onError(errorData.message || "Login failed. Please try again.");
-      }
-      const data = await res.json();
-      const user = data.user || data; // Adjust if API shape is different
-      // Set session (optional)
-      if (data.token) {
-        sessionStorage.setItem("jwt", data.token);
-      }
-      sessionStorage.setItem("isAuthenticated", "true");
-      sessionStorage.setItem("userRole", lowerCase(user.role));
-      // Always refresh context user after login
-      await fetchMe();
+      await login(formData);
       if (onSuccess) {
         onSuccess();
         return;

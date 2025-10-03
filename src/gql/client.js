@@ -20,63 +20,11 @@ const promiseToObservable = (promise) =>
     return subscriber;
   });
 
+// Remove all sessionStorage usage, rely on cookies and context for auth
 const authLink = setContext((_, { headers }) => {
-  const authToken = sessionStorage.getItem("authToken");
-
-  if (!authToken) return { headers };
-
-  try {
-    if (authToken) {
-      const newHeaders = {
-        ...headers,
-        authorization: `Bearer ${authToken}`,
-      };
-
-      return {
-        headers: newHeaders,
-      };
-    }
-  } catch (e) {
-    console.error("Failed to parse auth token from sessionStorage", e);
-  }
-
+  // No manual token attachment needed
   return { headers };
 });
-
-const handleRefreshToken = async () => {
-  try {
-    const authTokenString = sessionStorage.getItem("authToken");
-    if (!authTokenString) return;
-
-    const authToken = JSON.parse(authTokenString);
-    const refreshToken = authToken.refresh_token;
-
-    if (refreshToken) {
-      onSuccess("Refreshing session...");
-      const refreshedTokenResponse = await client.query({
-        query: "REFRESH_TOKEN",
-        variables: {
-          refresh_token: refreshToken,
-          device_id: "",
-        },
-      });
-
-      const newAuthToken = refreshedTokenResponse?.data?.refresh_token_get;
-      const newAccessToken =
-        refreshedTokenResponse?.data?.refresh_token_get?.access_token;
-
-      if (newAuthToken) {
-        sessionStorage.setItem("authToken", newAccessToken);
-        // Optionally store the full object if needed elsewhere
-        // sessionStorage.setItem("authTokenObject", JSON.stringify(newAuthToken));
-      } else {
-        onError("Failed to refresh token. Log out then sign-in again");
-      }
-    }
-  } catch (error) {
-    console.error("Refresh token error:", error.message);
-  }
-};
 
 const errorLink = onError(({ graphQLErrors, networkError, operation, forward }) => {
   if (graphQLErrors) {

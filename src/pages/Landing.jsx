@@ -17,12 +17,15 @@ export function Landing() {
 
 const LandingPage = () => {
   const [filters, setFilters] = useState({
-    status: "available",
+    // status: "available",
   });
 
   // Always ensure status: "available" is present in filters
   const setFiltersWithStatus = (newFilters) => {
-    setFilters({ ...newFilters, status: "available" });
+    setFilters({
+      ...newFilters,
+      // status: "available"
+    });
   };
 
   return (

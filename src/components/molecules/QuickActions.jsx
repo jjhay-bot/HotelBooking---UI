@@ -20,8 +20,6 @@ export default function QuickActions() {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
 
-  console.log('user', user);
-
   // Define actions inside the component to access user and logout
   const actions = [
     {

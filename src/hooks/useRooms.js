@@ -27,9 +27,11 @@ export function useRooms(page = 1, pageSize = 10, filters = {}, trigger = 0) {
     if (filters.minPrice != null) params.append("minPrice", filters.minPrice);
     if (filters.maxPrice != null) params.append("maxPrice", filters.maxPrice);
 
-    const token = sessionStorage.getItem("jwt");
+    // Remove sessionStorage usage, rely on HTTP-only cookies and context
+    // const token = sessionStorage.getItem("jwt");
+    // Add credentials: 'include' to fetch
     fetch(`${env.API_URI}/api/v1/rooms?${params.toString()}`, {
-      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      credentials: 'include',
     })
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch rooms");

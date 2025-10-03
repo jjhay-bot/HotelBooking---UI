@@ -4,8 +4,8 @@ A checklist of specific files and flows to improve for security and maintainabil
 
 ## 1. Authentication & Session Management
 - [✅] Move JWT and user role storage from sessionStorage to HTTP-only cookies (`useAuth.js`, `isAuthenticated.js`, `gql/client.js`, and all sessionStorage usage)
-- [ ] Centralize authentication logic to avoid duplication
-- [ ] Add token expiration checks and auto-logout
+- [✅] Centralize authentication logic to avoid duplication
+<!-- - [✅] Add token expiration checks and auto-logout -->
 
 ## 2. Route Protection
 - [ ] Ensure all sensitive routes are protected in both frontend and backend (`ProtectedRoute.jsx`, `routes.jsx`)

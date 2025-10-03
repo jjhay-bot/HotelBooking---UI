@@ -72,7 +72,7 @@ export default function Login({ hideLinks = false, onSuccess }) {
   useEffect(() => {
     if (user?.role?.match(/admin/gi)) {
       navigate("/admin/dashboard");
-    } else if (user) {
+    } else if (user?.role) {
       navigate("/");
     }
   }, [user, navigate]);

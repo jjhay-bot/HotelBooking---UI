@@ -10,9 +10,8 @@ export default function useUserBookings(userId) {
     if (!userId) return;
     setLoading(true);
     setError(null);
-    const token = sessionStorage.getItem("jwt");
     fetch(`${env.API_URI}/api/v1/bookings/by-user/${userId}`, {
-      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      credentials: 'include',
     })
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch bookings");

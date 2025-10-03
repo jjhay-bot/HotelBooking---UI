@@ -32,15 +32,6 @@ export function AuthProvider({ children }) {
   const fetchMe = async () => {
     setLoading(true);
     try {
-      // skip /me for local dev ONLY
-      if (env.STAGE === 'local2') {
-        setUser({
-          "role": "guest",
-        })
-        setLoading(false);
-        return
-      }
-
       const res = await fetch(`${env.API_URI}/api/v1/auth/me`, {
         credentials: 'include',
       });
@@ -51,7 +42,7 @@ export function AuthProvider({ children }) {
         setUser(null);
       }
     } catch {
-      setUser(null);
+      setUser({ "role": "guest" })
     } finally {
       setLoading(false);
     }
@@ -74,15 +65,6 @@ export function AuthProvider({ children }) {
       setLoading(true);
 
       try {
-        // skip /me for local dev ONLY
-        // if (env.STAGE === 'local') {
-        //   setUser({
-        //     "role": "guest",
-        //   })
-        //   setLoading(false);
-        //   return
-        // }
-
         const res = await fetch(`${env.API_URI}/api/v1/auth/me`, {
           credentials: "include",
         });
@@ -138,8 +120,6 @@ export function AuthProvider({ children }) {
     } catch (error) {
       console.error("Logout API call failed:", error);
     } finally {
-      // Clear any remaining session data
-      sessionStorage.clear();
       localStorage.clear();
       setUser(null);
       setLoading(false);
@@ -149,8 +129,24 @@ export function AuthProvider({ children }) {
     }
   };
 
+  // Utility: refresh and retry pattern
+  async function refreshTokenAndRetry(url, options = {}) {
+    // First attempt
+    let res = await fetch(url, options);
+    // Only refresh and retry if not a /me call
+    if (res.status === 401 && !url.includes('/me')) {
+      // Try to refresh token
+      const refreshed = await refreshToken();
+      if (refreshed) {
+        // Retry original request once
+        res = await fetch(url, options);
+      }
+    }
+    return res;
+  }
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, refreshToken, fetchMe }}>
+    <AuthContext.Provider value={{ user, loading, login, logout, refreshToken, fetchMe, refreshTokenAndRetry }}>
       {children}
     </AuthContext.Provider>
   );

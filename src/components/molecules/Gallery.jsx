@@ -4,7 +4,7 @@ import { Box, Card, CardMedia, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useAutoAnimate } from "@/hooks/useAutoAnimate";
 
-export const MotionBox = motion(Box);
+export const MotionBox = motion.create(Box);
 
 export default function Gallery({ cards = [], anime = false }) {
   const [active, setActive] = useState(cards[0]?.id || null);

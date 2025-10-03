@@ -8,31 +8,24 @@ export default function useBookings(page = 1, pageSize = 10) {
   const [total, setTotal] = useState(0);
 
   useEffect(() => {
-    let isMounted = true;
     setLoading(true);
-    const token = sessionStorage.getItem("jwt");
-    fetch(`${env.API_URI}/api/v1/bookings?page=${page}&pageSize=${pageSize}`, {
-      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    // Remove sessionStorage usage, rely on HTTP-only cookies and context
+    // const token = sessionStorage.getItem("jwt");
+    // Add credentials: 'include' to fetch
+
+    fetch(`${env.API_URI}/api/v1/bookings`, {
+      credentials: 'include',
     })
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch bookings");
         return res.json();
       })
       .then((data) => {
-        if (isMounted) {
-          setBookings(Array.isArray(data.bookings) ? data.bookings : []);
-          setTotal(typeof data.totalCount === "number" ? data.totalCount : 0);
-        }
+        setBookings(Array.isArray(data?.bookings) ? data?.bookings : []);
+        setTotal(typeof data.totalCount === "number" ? data.totalCount : 0);
       })
-      .catch((err) => {
-        if (isMounted) setError(err);
-      })
-      .finally(() => {
-        if (isMounted) setLoading(false);
-      });
-    return () => {
-      isMounted = false;
-    };
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false));
   }, [page, pageSize]);
 
   return { bookings, loading, error, total };

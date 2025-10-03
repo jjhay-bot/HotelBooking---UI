@@ -19,109 +19,47 @@ import { motion } from "framer-motion";
 import GalleryDetails from "@/components/molecules/GalleryDetails";
 import { getRoomStatusStyle, getRoomStatusText, isRoomBookable } from "@/utils/roomUtils";
 import BookmarkIcon from "@mui/icons-material/Bookmark";
-import PeopleIcon from "@mui/icons-material/People";
-import BedIcon from "@mui/icons-material/Bed";
-import SquareFootIcon from "@mui/icons-material/SquareFoot";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { useModal } from "@/hooks";
-import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import HotelPolicies from "@/components/organisms/HotelPolicies";
 import RoomFeatures from "@/components/organisms/RoomFeatures";
 import BookingSummary from "@/components/organisms/BookingSummary";
 import GuestReviews from "@/components/organisms/GuestReviews";
 import LocationNearby from "@/components/organisms/LocationNearby";
-import { env } from "@/constants";
-import { onError, onSuccess } from "@/gql/uiActions";
 import { Login } from "@/pages";
 import { lowerCase } from "lodash";
+import { useRoomDetails } from "@/hooks/useRoomDetails";
+import RoomSpecs from "@/components/RoomSpecs";
 
-export default function RoomDetails({ room }) {
+export default function RoomDetails({ room: initialRoom }) {
   const theme = useTheme();
   const modal = useModal();
 
-  // Booking state
-  const [checkIn, setCheckIn] = useState(null);
-  const [checkOut, setCheckOut] = useState(null);
-  const [notes, setNotes] = useState("");
-  const [errors, setErrors] = useState({});
-  const [apiError, setApiError] = useState("");
-  const [showLoginDialog, setShowLoginDialog] = useState(false);
-  // TODO: Replace with real user id and JWT from auth context
-  const userId = 1;
-  const JWT_TOKEN = sessionStorage.getItem("jwt");
-  // Calculate total price
-  let nights = 1;
-  if (checkIn && checkOut) {
-    nights = Math.max(1, Math.round((checkOut - checkIn) / (1000 * 60 * 60 * 24)));
-  }
-  const totalPrice = room ? (room.pricePerNight * nights + 5) * 1.12 : 0;
+  const {
+    room,
+    loading,
+    error,
+    checkIn,
+    setCheckIn,
+    checkOut,
+    setCheckOut,
+    notes,
+    setNotes,
+    errors,
+    apiError,
+    showLoginDialog,
+    setShowLoginDialog,
+    bookRoom,
+  } = useRoomDetails(initialRoom?.id);
 
   const onBookNow = () => {
     modal.openModal();
   };
 
   const onConfirmBooking = async () => {
-    let newErrors = {};
-    setApiError("");
-    // Validation
-    if (!checkIn) newErrors.checkIn = "Check-in date is required";
-    if (!checkOut) newErrors.checkOut = "Check-out date is required";
-
-    if (checkIn && checkOut && checkOut <= checkIn)
-      newErrors.checkOut = "Check-out must be after check-in";
-    setErrors(newErrors);
-
-    if (Object.keys(newErrors).length > 0) return;
-
-    const payload = {
-      userId,
-      roomId: room.id,
-      startDate: checkIn.toISOString(),
-      endDate: checkOut.toISOString(),
-      status: "Reserved",
-      totalPrice: Number(totalPrice.toFixed(2)),
-      notes,
-    };
-
-    try {
-      const res = await fetch(`${env.API_URI}/api/v1/bookings`, {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${JWT_TOKEN}`,
-        },
-        body: JSON.stringify(payload),
-        credentials: "include",
-      });
-
-      if (!res.ok) {
-        let msg = "Booking failed";
-        if (res.status === 401) {
-          msg = "You are not authorized. Please log in again.";
-          setApiError(msg);
-          onError(msg);
-          setShowLoginDialog(true);
-          return;
-        }
-        try {
-          const data = await res.json();
-          if (data && data.message) msg = data.message;
-        } catch {
-          console.log("Failed to parse error response");
-        }
-        setApiError(msg);
-        onError(msg);
-        return;
-      }
-
-      onSuccess("Booking successful!");
-      modal.closeModal();
-    } catch (e) {
-      onError(e.message);
-    }
+    const success = await bookRoom();
+    if (success) modal.closeModal();
   };
 
   useEffect(() => {
@@ -135,12 +73,24 @@ export default function RoomDetails({ room }) {
     };
   }, [modal.open]);
 
-  if (!room) {
+  if (loading) {
     return (
       <Card sx={{ borderRadius: 6 }}>
         <CardContent>
           <Typography variant="h6" color="text.secondary">
-            Select a room to view details
+            Loading room details...
+          </Typography>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (error || !room) {
+    return (
+      <Card sx={{ borderRadius: 6 }}>
+        <CardContent>
+          <Typography variant="h6" color="text.secondary">
+            {error?.message || "Failed to load room details. Please try again later."}
           </Typography>
         </CardContent>
       </Card>
@@ -224,39 +174,7 @@ export default function RoomDetails({ room }) {
                 <Divider />
 
                 {/* Room Specifications */}
-                <Box>
-                  <Typography variant="h6" gutterBottom>
-                    Room Details
-                  </Typography>
-                  <Grid container spacing={2}>
-                    <Grid size={6}>
-                      <Stack direction="row" spacing={1} alignItems="center">
-                        <PeopleIcon fontSize="small" color="action" />
-                        <Typography variant="body2">
-                          Up to {room.capacity} guests
-                        </Typography>
-                      </Stack>
-                    </Grid>
-                    <Grid size={6}>
-                      <Stack direction="row" spacing={1} alignItems="center">
-                        <BedIcon fontSize="small" color="action" />
-                        <Typography variant="body2">{room.bedType}</Typography>
-                      </Stack>
-                    </Grid>
-                    <Grid size={6}>
-                      <Stack direction="row" spacing={1} alignItems="center">
-                        <SquareFootIcon fontSize="small" color="action" />
-                        <Typography variant="body2">{room.size}</Typography>
-                      </Stack>
-                    </Grid>
-                    <Grid size={6}>
-                      <Stack direction="row" spacing={1} alignItems="center">
-                        <LocationOnIcon fontSize="small" color="action" />
-                        <Typography variant="body2">Floor {room.floor}</Typography>
-                      </Stack>
-                    </Grid>
-                  </Grid>
-                </Box>
+                <RoomSpecs room={room} />
 
                 <Divider />
 
