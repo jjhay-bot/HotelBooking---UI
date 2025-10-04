@@ -1,19 +1,18 @@
-import { CircularProgress, Typography, Grid, Chip } from "@mui/material";
+import {  Typography, Grid, Chip } from "@mui/material";
 import DataTable from "../molecules/DataTable";
-import useBookings from "@/hooks/useBookings";
 import { useState } from "react";
 import { getRoomStatusStyle } from "@/utils/roomUtils";
 import { lowerCase } from "lodash";
 import { useTheme } from "@emotion/react";
 import { LoadingState } from "../atoms/Spinner";
+import { useBookings } from "@/hooks";
 
 export default function BookingsTable() {
   const [page, setPage] = useState(1);
   const pageSize = 10;
 
   const theme = useTheme();
-  const { bookings, loading, error, total } = useBook
-  ings(page, pageSize);
+  const { bookings, loading, error, total } = useBookings(page, pageSize);
 
   const columns = [
     // { field: "id", headerName: "ID", minWidth: 90 },

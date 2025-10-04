@@ -24,8 +24,8 @@ import { useNavigate } from 'react-router-dom';
 const statusOptions = [
   { label: "All", value: "all" },
   { label: "Available", value: "available" },
-  { label: "Reserved", value: "Reserved" },
-  { label: "Occupied", value: "occupied" },
+  // { label: "Reserved", value: "Reserved" },
+  // { label: "Occupied", value: "occupied" },
   { label: "Maintenance", value: "maintenance" },
 ];
 
