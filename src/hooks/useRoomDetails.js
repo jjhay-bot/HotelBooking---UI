@@ -58,7 +58,7 @@ export function useRoomDetails(roomId) {
       if (!res.ok) {
         let msg = "Booking failed";
         if (res.status === 401) {
-          msg = "You are not authorized. Please log in again.";
+          msg = "You are not authorized. Please log in to continue.";
           setApiError(msg);
           onError(msg);
           setShowLoginDialog(true);

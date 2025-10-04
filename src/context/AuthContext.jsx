@@ -56,7 +56,7 @@ export function AuthProvider({ children }) {
       const res = await fetch(`${env.API_URI}/api/v1/csrf-sessions`, {
         credentials: "include",
       });
-      if (!res.ok) throw new Error("Failed to fetch CSRF token");
+      if (!res.ok) throw new Error("You are not authorized. Please log in to continue.");
       const data = await res.json();
       setCsrfToken(data.csrfToken);
       return data.csrfToken;
@@ -170,7 +170,7 @@ export function AuthProvider({ children }) {
     }
     // Ensure CSRF token is present
     const token = await getCsrfToken();
-    if (!token) throw new Error("CSRF token missing");
+    if (!token) throw new Error("You are not authorized. Please log in to continue.");
     // Add CSRF token to headers
     const headers = {
       ...(options.headers || {}),
