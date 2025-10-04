@@ -7,6 +7,7 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [csrfToken, setCsrfToken] = useState(null);
 
   // Refresh token function
   const refreshToken = useCallback(async () => {
@@ -47,6 +48,23 @@ export function AuthProvider({ children }) {
       setLoading(false);
     }
   };
+
+  // Fetch CSRF token once and reuse
+  const getCsrfToken = useCallback(async () => {
+    if (csrfToken) return csrfToken;
+    try {
+      const res = await fetch(`${env.API_URI}/api/v1/csrf-sessions`, {
+        credentials: "include",
+      });
+      if (!res.ok) throw new Error("Failed to fetch CSRF token");
+      const data = await res.json();
+      setCsrfToken(data.csrfToken);
+      return data.csrfToken;
+    } catch {
+      setCsrfToken(null);
+      return null;
+    }
+  }, [csrfToken]);
 
   // Check auth state on mount
   useEffect(() => {
@@ -112,10 +130,13 @@ export function AuthProvider({ children }) {
   const logout = async (navigateFn) => {
     setIsLoggingOut(true);
     setLoading(true);
+    const token = await getCsrfToken();
+
     try {
       await fetch(`${env.API_URI}/api/v1/auth/logout`, {
         method: "POST",
         credentials: "include",
+        headers: { "X-CSRF-Token": token }
       });
     } catch (error) {
       console.error("Logout API call failed:", error);
@@ -145,8 +166,34 @@ export function AuthProvider({ children }) {
     return res;
   }
 
+  // Utility: fetch with CSRF for /bookings endpoints only
+  const fetchWithCsrf = useCallback(async (url, options = {}) => {
+    if (!url.includes("/bookings")) {
+      // Not a bookings endpoint, just fetch
+      return fetch(url, options);
+    }
+    // Ensure CSRF token is present
+    const token = await getCsrfToken();
+    if (!token) throw new Error("CSRF token missing");
+    // Add CSRF token to headers
+    const headers = {
+      ...(options.headers || {}),
+      "X-CSRF-Token": token,
+    };
+    return fetch(url, { ...options, headers });
+  }, [getCsrfToken]);
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, refreshToken, fetchMe, refreshTokenAndRetry }}>
+    <AuthContext.Provider value={{
+      user,
+      loading,
+      login,
+      logout,
+      refreshToken,
+      fetchMe,
+      refreshTokenAndRetry,
+      fetchWithCsrf, // Expose CSRF utility
+    }}>
       {children}
     </AuthContext.Provider>
   );

@@ -9,6 +9,7 @@ import { SnackbarProvider } from "notistack";
 import { Toaster } from "react-hot-toast";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { Notification } from "./components/atoms/Notification";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   // <React.StrictMode>
@@ -30,6 +31,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             }}
             limit={3}
           />
+          <Notification />
         </AppThemeProvider>
       </LocalizationProvider>
     </SnackbarProvider>

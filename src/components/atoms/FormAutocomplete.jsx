@@ -4,7 +4,6 @@ import { KeyboardArrowDown } from "@mui/icons-material";
 import {
   Autocomplete,
   Grid,
-  InputAdornment,
   Stack,
   TextField,
   Typography,

@@ -1,17 +1,20 @@
-import React from "react";
-import toast from "react-hot-toast";
-import { Notification } from "@components/atoms/Notification";
 import { map, startCase } from "lodash";
+import { alertVar } from "./reactiveVar";
 
 // NOTIFICATION
 export const onError = (message) => {
-  toast.custom((t) => React.createElement(Notification, { t, type: "error", message }));
+  alertVar({ message, type: "error" });
+  // toast.custom((t) => React.createElement(Notification, { t, type: "error", message }));
 };
 
 export const onSuccess = (message) => {
-  toast.custom((t) => React.createElement(Notification, { t, type: "success", message }));
+  alertVar({ message, type: "success" });
+  // toast.custom((t) => React.createElement(Notification, { t, type: "success", message }));
 };
 
+export const resetAlert = () => {
+  alertVar(null);
+};
 export const updateStatus = (arr, id, newStatus) => {
   onSuccess(`${startCase(id)} submitted!`);
 

@@ -6,7 +6,7 @@ import { onError, onSuccess } from "@/gql/uiActions";
 
 export function useRoomDetails(roomId) {
   const { room, loading, error } = useRoom(roomId);
-  const { user } = useAuth();
+  const { user, fetchWithCsrf } = useAuth();
 
   // Booking state
   const [checkIn, setCheckIn] = useState(null);
@@ -46,7 +46,7 @@ export function useRoomDetails(roomId) {
     };
 
     try {
-      const res = await fetch(`${env.API_URI}/api/v1/bookings`, {
+      const res = await fetchWithCsrf(`${env.API_URI}/api/v1/bookings`, {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -66,7 +66,10 @@ export function useRoomDetails(roomId) {
         }
         try {
           const data = await res.json();
-          if (data && data.message) msg = data.message;
+          if (data && data.message) {
+            msg = data.message;
+            onError(msg);
+          }
         } catch {
           // ignore
         }
@@ -77,6 +80,7 @@ export function useRoomDetails(roomId) {
       onSuccess("Booking successful!");
       return true;
     } catch (e) {
+      console.log(e);
       onError(e.message);
       setApiError(e.message);
       return false;

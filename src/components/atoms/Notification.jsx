@@ -1,43 +1,49 @@
-import toast from "react-hot-toast";
-import { Alert, IconButton, Slide, Snackbar, Typography } from "@mui/material";
+import { useReactiveVar } from "@apollo/client";
 import { CircleShadedIcon, CloseIcon, RejectedIcon } from "@assets/Icons";
 import { color } from "@constants";
+import { alertVar } from "@gql/reactiveVar";
+import { resetAlert } from "@gql/uiActions";
+import { Alert, Slide, Snackbar, Typography } from "@mui/material";
 
 function TransitionLeft(props) {
-  return <Slide {...props} direction="left" />;
+  return <Slide {...props} direction="up" />;
 }
 
-// Custom Notification component for react-hot-toast
-export const Notification = ({ t, type, message }) => (
-  <Alert
-    severity={type}
-    iconMapping={{ success: <CircleShadedIcon />, error: <RejectedIcon /> }}
-    slots={{ closeIcon: CloseIcon }}
-    slotProps={{
-      closeIcon: { fill: type === "success" ? color.green : "#ED5A29" },
-    }}
-    sx={{
-      width: "420px",
-      borderRadius: 2,
-      boxShadow: 3,
-      mb: 1,
-      display: "flex",
-      alignItems: "center",
-      "& .MuiAlert-icon": { mr: 1 },
-      "& .MuiAlert-action svg": { width: 24, height: 24 },
-    }}
-    action={
-      <IconButton>
-        <CloseIcon
-          style={{ cursor: "pointer" }}
-          onClick={() => toast.dismiss(t.id)}
-          fill={type === "success" ? color.green : "#ED5A29"}
-        />
-      </IconButton>
-    }
-  >
-    <Typography variant="toast" color={type}>
-      {message}
-    </Typography>
-  </Alert>
-);
+export const Notification = () => {
+  const alert = useReactiveVar(alertVar);
+
+  if (!alert) return null;
+
+  return (
+    alert && (
+      <Snackbar
+        open={true}
+        autoHideDuration={3000}
+        onClose={resetAlert}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        slots={{ transition: TransitionLeft }}
+        sx={{ mb: { xs: 3, md: 1 } }}
+      >
+        <Alert
+          onClose={resetAlert}
+          severity={alert.type}
+          iconMapping={{ success: <CircleShadedIcon />, error: <RejectedIcon /> }}
+          slots={{ closeIcon: CloseIcon }}
+          slotProps={{
+            closeIcon: { fill: alert.type === "success" ? color.green : "#ED5A29" },
+          }}
+          sx={{
+            width: "420px",
+            borderRadius: 2,
+            "& .MuiAlert-icon": { mr: 1 },
+            "& .MuiAlert-action svg": { width: 24, height: 24 },
+          }}
+        >
+          <Typography variant="toast" color={alert.type}>
+            {alert.message}
+          </Typography>
+        </Alert>
+      </Snackbar>
+    )
+  );
+};
