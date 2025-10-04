@@ -68,17 +68,6 @@ export function AuthProvider({ children }) {
 
   // Check auth state on mount
   useEffect(() => {
-    // Don't check auth status if we're logging out or if logout was just completed
-    const justLoggedOut = localStorage.getItem('justLoggedOut');
-    if (isLoggingOut || justLoggedOut) {
-      if (justLoggedOut) {
-        localStorage.removeItem('justLoggedOut');
-        setUser(null);
-        setLoading(false);
-      }
-      return;
-    }
-
     async function initialFetchMe() {
       setLoading(true);
 
@@ -101,8 +90,11 @@ export function AuthProvider({ children }) {
         setLoading(false);
       }
     }
-    initialFetchMe();
-  }, [refreshToken, isLoggingOut]);
+
+    if (!window.location.pathname.match(/login|register/gi)) {
+      initialFetchMe();
+    }
+  }, []);
 
   // Login function
   const login = async (formData) => {
@@ -114,13 +106,17 @@ export function AuthProvider({ children }) {
         body: JSON.stringify(formData),
         credentials: "include",
       });
-
-      if (!res.ok) throw new Error("Login failed");
+      if (!res.ok) {
+        let errorMsg = "Login failed";
+        const errorData = await res.json();
+        if (errorData && errorData.message) errorMsg = errorData.message;
+        setUser(null);
+        throw new Error(errorMsg);
+      }
       await fetchMe(); // <-- fetch user info after login
-      return true;
-    } catch {
+    } catch (e) {
       setUser(null);
-      return false;
+      throw new Error(e.message || "Login failed");
     } finally {
       setLoading(false);
     }

@@ -11,8 +11,8 @@ export function useAuth() {
   // Login using context
   const loginHandler = async (formData, onSuccess) => {
     try {
-      await login(formData);
-      if (onSuccess) {
+      const responseSuccess = await login(formData);
+      if (responseSuccess) {
         onSuccess();
         return;
       }
