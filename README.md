@@ -1,5 +1,38 @@
 # Hotel Booking System Web Application
 
+## Quick Overview
+A modern hotel booking system web application. Users can browse rooms, filter by amenities, book stays, and manage reservations. Admins can manage rooms, bookings, and users. The app is secure, responsive, and built for real-world hotel operations.
+
+## Technologies Used
+- **Backend:** C# (API)
+- **Frontend:** HTML, CSS, JavaScript, React, Vite, Material-UI (MUI), Emotion, Framer Motion
+- **Routing:** React Router DOM
+- **State Management:** React Context API
+- **Date Handling:** date-fns, MUI X Date Pickers
+- **Notifications:** Notistack, React Hot Toast
+- **Other:** Apollo Client (GraphQL-ready), Lodash, Keen Slider, Leaflet
+- **Testing/Dev:** ESLint, Prettier, Jest
+
+## How to Run the Project
+1. **Install dependencies:**
+   ```sh
+   pnpm install
+   ```
+2. **Start development server:**
+   ```sh
+   pnpm dev
+   ```
+3. **Build for production:**
+   ```sh
+   pnpm build
+   ```
+4. **Run tests:**
+   ```sh
+   pnpm test
+   ```
+
+---
+
 ## Project Repositories
 
 - **Frontend (UI):** [https://github.com/jjhay-bot/HotelBooking---UI](https://github.com/jjhay-bot/HotelBooking---UI)
@@ -48,37 +81,3 @@ Currently, two official plugins are available:
 ## Expanding the ESLint configuration
 
 If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
-
-## Getting Started
-
-### Prerequisites
-- [Node.js](https://nodejs.org/) (v18 or newer recommended)
-- [pnpm](https://pnpm.io/) (install via `npm install -g pnpm`)
-
-### Install dependencies
-```sh
-pnpm install
-```
-
-### Run the development server
-```sh
-pnpm dev
-```
-
-### Build for production
-```sh
-pnpm build
-```
-
-### Run tests (if available)
-```sh
-pnpm test
-```
-
-## See Also
-- [Project Overview](./project-overview.md)
-- [Future Improvements & Security Progress](./future-improvements%20%5Bsecurity%5D/auth_cookie_migration.md)
-- [Input Sanitization & Validation](./future-improvements%20%5Bsecurity%5D/sanitation_validation.md)
-- [Authentication Usage](./future-improvements%20%5Bsecurity%5D/AUTH_USAGE.md)
-
-For more details, see the documentation above.
