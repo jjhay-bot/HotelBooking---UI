@@ -1,4 +1,5 @@
 import { env } from "@/constants";
+import { cleanRoomFilters } from "@/utils/security/cleanRoomFilters";
 import { useEffect, useState } from "react";
 
 export function useRooms(page = 1, pageSize = 10, filters = {}, trigger = 0) {
@@ -10,22 +11,26 @@ export function useRooms(page = 1, pageSize = 10, filters = {}, trigger = 0) {
   useEffect(() => {
     let isMounted = true;
     setLoading(true);
-    // Build query params from filters
-    const params = new URLSearchParams();
-    params.append("page", page);
-    params.append("pageSize", pageSize);
-    if (filters.status) params.append("status", filters.status);
-    if (filters.checkIn) params.append("checkIn", filters.checkIn);
-    if (filters.checkOut) params.append("checkOut", filters.checkOut);
-    if (filters.guestCount) params.append("guestCount", filters.guestCount);
-    if (filters.roomTypeId) {
-      params.append("roomTypeId", filters.roomTypeId);
-    } else if (filters.roomType) {
-      // Only append roomType if roomTypeId is not present
-      params.append("roomTypeId", filters.roomType); // treat legacy roomType as roomTypeId
-    }
-    if (filters.minPrice != null) params.append("minPrice", filters.minPrice);
-    if (filters.maxPrice != null) params.append("maxPrice", filters.maxPrice);
+    // Clean filters before building query params
+    const safeFilters = cleanRoomFilters(filters);
+    // Handle legacy roomType
+    let roomTypeId = safeFilters.roomTypeId || safeFilters.roomType || undefined;
+    // Build all params in one object
+    const allParams = {
+      page,
+      pageSize,
+      ...safeFilters,
+      roomTypeId,
+    };
+    // Remove legacy roomType from params if present
+    delete allParams.roomType;
+    // Remove undefined values
+    Object.keys(allParams).forEach(key => {
+      if (allParams[key] === undefined || allParams[key] === "") {
+        delete allParams[key];
+      }
+    });
+    const params = new URLSearchParams(allParams);
 
     // Remove sessionStorage usage, rely on HTTP-only cookies and context
     // const token = sessionStorage.getItem("jwt");

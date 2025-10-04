@@ -16,9 +16,9 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import PersonIcon from "@mui/icons-material/Person";
 import LockIcon from "@mui/icons-material/Lock";
 import EmailIcon from "@mui/icons-material/Email";
-import PhoneIcon from "@mui/icons-material/Phone";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { validateAndSanitizeInput } from "@/utils/security/inputValidation";
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -55,40 +55,30 @@ export default function Register() {
 
   const validateForm = () => {
     const newErrors = {};
+    // Sanitize and validate each field
+    const firstNameResult = validateAndSanitizeInput(formData.firstName, "name");
+    const lastNameResult = validateAndSanitizeInput(formData.lastName, "name");
+    const emailResult = validateAndSanitizeInput(formData.email, "email");
+    const passwordResult = validateAndSanitizeInput(formData.password, "password");
+    const confirmPasswordResult = validateAndSanitizeInput(formData.confirmPassword, "confirmPassword");
 
-    if (!formData.firstName.trim()) {
-      newErrors.first_name = "First name is required";
-    }
-
-    if (!formData.lastName.trim()) {
-      newErrors.last_name = "Last name is required";
-    }
-
-    if (!formData.email) {
-      newErrors.email = "Email is required";
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Please enter a valid email";
-    }
-
-    // if (!formData.phone) {
-    //   newErrors.phone = 'Phone number is required';
-    // } else if (!/^\+?[\d\s-()]+$/.test(formData.phone)) {
-    //   newErrors.phone = 'Please enter a valid phone number';
-    // }
-
-    if (!formData.password) {
-      newErrors.password = "Password is required";
-    } else if (formData.password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters";
-    } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.password)) {
-      newErrors.password = "Password must contain uppercase, lowercase, and number";
-    }
-
-    if (!formData.confirmPassword) {
-      newErrors.confirm_password = "Please confirm your password";
-    } else if (formData.password !== formData.confirmPassword) {
+    if (firstNameResult.error) newErrors.first_name = firstNameResult.error;
+    if (lastNameResult.error) newErrors.last_name = lastNameResult.error;
+    if (emailResult.error) newErrors.email = emailResult.error;
+    if (passwordResult.error) newErrors.password = passwordResult.error;
+    if (confirmPasswordResult.error) newErrors.confirm_password = confirmPasswordResult.error;
+    if (!newErrors.confirm_password && formData.password !== formData.confirmPassword) {
       newErrors.confirm_password = "Passwords do not match";
     }
+
+    // Optionally update formData with sanitized values
+    setFormData((prev) => ({
+      ...prev,
+      firstName: firstNameResult.sanitized,
+      lastName: lastNameResult.sanitized,
+      email: emailResult.sanitized,
+      // password and confirmPassword are not sanitized for security reasons
+    }));
 
     return newErrors;
   };

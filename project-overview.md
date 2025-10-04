@@ -103,3 +103,53 @@ Summarize the project, its features, and your learning outcomes.
 - **Data Validation:** Add more robust client-side and server-side validation for forms.
 - **Audit Logs (Admin):** Track changes to bookings/users for security and troubleshooting.
 - **Multi-language Support:** Make the app accessible to international users.
+
+# Input Handling Terminology
+
+- **Sanitize:** Remove or escape unwanted, dangerous, or invalid characters from input (e.g., strip `<`, `>`, `&` to prevent XSS/injection).
+- **Normalize:** Convert input to a standard format for consistency (e.g., trim whitespace, lowercase email).
+- **Validate:** Check if input meets required rules or formats (e.g., not empty, valid email, strong password).
+- **Escape:** Convert special characters to safe representations (e.g., `&` to `&amp;`).
+- **Encode:** Change data to a different format (e.g., URL encoding).
+- **Parse:** Convert input from one format to another (e.g., string to number).
+- **Clean:** General term for removing unwanted data.
+
+Use these practices to ensure user input is safe, consistent, and correct before processing or storing it.
+
+## Where to Use Escape, Parse, Clean, Encode
+
+- **Escape:** When displaying user input in HTML (to prevent XSS), or in SQL queries (to prevent injection).
+- **Parse:** When converting input types, e.g., string to number, parsing JSON, or dates.
+- **Clean:** When removing unwanted data, such as extra spaces, invalid characters, or filtering out profanity.
+- **Encode:** When sending data in URLs (`encodeURIComponent`), or encoding for storage/transmission.
+
+These are used in:
+- Form handling (before saving or displaying user input)
+- API request/response processing
+- Database operations
+- Rendering data in the UI
+
+Use these practices to keep your app secure, robust, and user-friendly.
+
+## CORS vs CSRF vs Cookie Security
+
+- **CORS (Cross-Origin Resource Sharing):** Controls which domains can access your backend/API from the browser. Prevents unauthorized websites from making requests to your API.
+- **CSRF (Cross-Site Request Forgery):** Protects against unwanted actions performed by authenticated users via cross-site requests. Use CSRF tokens and SameSite cookies for protection.
+- **Cookies (HttpOnly, Secure, SameSite):** Protect session/authentication data and help prevent XSS and CSRF. Configure these flags for best security.
+
+CORS and CSRF are different protections, but both are needed for a secure cross-domain setup. Always configure both, along with secure cookies, for best results.
+
+## Security Protections: Individual vs Combined
+
+| Protection         | What It Protects Against         | Alone (Partial) | Combined (Strong) |
+|--------------------|----------------------------------|-----------------|-------------------|
+| CORS               | Unauthorized cross-origin access | ✔️ Blocks some attacks | ✔️ Strong with CSRF/cookies |
+| CSRF Tokens        | Cross-site request forgery       | ✔️ Protects actions | ✔️ Strong with cookies/CORS |
+| HttpOnly Cookies   | XSS, cookie theft                | ✔️ Protects from JS | ✔️ Strong with CSRF/CORS |
+| Secure Cookies     | Network interception             | ✔️ Protects over HTTPS | ✔️ Strong with other flags |
+| SameSite Cookies   | CSRF, cross-site requests        | ✔️ Blocks some CSRF | ✔️ Strong with CSRF tokens |
+| Input Validation   | Injection, XSS                   | ✔️ Protects data/UI | ✔️ Strong with all above |
+
+**Notes:**
+- Each protection helps against specific threats, but combining them provides much stronger security.
+- For best results, use all together: CORS, CSRF tokens, HttpOnly/Secure/SameSite cookies, and input validation.

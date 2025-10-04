@@ -12,6 +12,7 @@ import ContactUs from "@/pages/ContactUs";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import SplashScreen from "@/components/SplashScreen";
 import UserRecords from "@/pages/UserRecords";
+import SecurityDemo from "@/demo/SecurityDemo";
 
 const router = createBrowserRouter([
   // LANDING PAGE PER SERVICE
@@ -69,6 +70,11 @@ const router = createBrowserRouter([
     path: "*",
     element: <NotFound />,
   },
+  // demo and ui test
+  {
+    path: "/demo/security",
+    element: <SecurityDemo />,
+  }
 ]);
 
 export default router;

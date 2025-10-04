@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>XSS Demo: Plain HTML</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 2rem;
+    }
+
+    .output {
+      background: #f9f9f9;
+      padding: 1rem;
+      border-radius: 6px;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+
+<body>
+  <h2>XSS Demo: Plain HTML</h2>
+  <p>Type anything below, including HTML or script tags, and see what happens when rendered <strong>without
+      protection</strong>:</p>
+
+  <input id="victim" value="secret" />
+  <input id="userInput" type="text" style="width: 100%; padding: 8px; margin-bottom: 16px;"
+    placeholder="Try: <img src=x onerror=alert('XSS')> or <script>alert('XSS')</script>" />
+  <button onclick="renderUnescaped()">Render Unescaped</button>
+  <button onclick="renderEscaped()">Render Escaped</button>
+  <div class="output" id="output"></div>
+
+  <script>
+    function renderUnescaped() {
+      var val = document.getElementById('userInput').value;
+      document.getElementById('output').innerHTML = val;
+    }
+    function escapeHTML(str) {
+      return str.replace(/[&<>"']/g, function (m) {
+        return {
+          '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+        }[m];
+      });
+    }
+    function renderEscaped() {
+      var val = document.getElementById('userInput').value;
+      document.getElementById('output').innerHTML = escapeHTML(val);
+    }
+  </script>
+</body>
+
+</html>
