@@ -3,6 +3,10 @@
 ## Quick Overview
 A modern hotel booking system web application. Users can browse rooms, filter by amenities, book stays, and manage reservations. Admins can manage rooms, bookings, and users. The app is secure, responsive, and built for real-world hotel operations.
 
+**Documentation:**
+- [Project Overview](./project-overview.md)
+- [Features & Improvements](./FEATURES_AND_IMPROVEMENTS.md)
+
 ## Technologies Used
 - **Backend:** C# (API)
 - **Frontend:** HTML, CSS, JavaScript, React, Vite, Material-UI (MUI), Emotion, Framer Motion
