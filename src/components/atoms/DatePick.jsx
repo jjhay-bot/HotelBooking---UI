@@ -47,7 +47,7 @@ const DatePick = ({
               />
             ),
             actionBar: {
-              actions: [],
+              actions: ["clear", "today"], // 👈 enables Clear button in picker popup
             },
             ...slotProps,
           }}

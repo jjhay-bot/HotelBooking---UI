@@ -139,9 +139,6 @@ export default function BookingSummary({
                 <Typography variant="body2" color="text.secondary">
                   Check-in
                 </Typography>
-
-                {/* Check-in/out Inputs */}
-
                 <DatePick label="" value={checkInDate} onChange={onCheckInChange} />
                 {errors.checkIn && (
                   <Typography
@@ -154,13 +151,6 @@ export default function BookingSummary({
                   </Typography>
                 )}
 
-                {/* <Typography variant="subtitle1" fontWeight="600">
-                  {checkInDay}
-                </Typography>
-
-                <Typography variant="body2" color="text.secondary">
-                  {checkInTime}
-                </Typography> */}
               </Grid>
               <Grid size={6}>
                 <Typography variant="body2" color="text.secondary">
@@ -177,13 +167,6 @@ export default function BookingSummary({
                     {errors.checkOut}
                   </Typography>
                 )}
-
-                {/* <Typography variant="subtitle1" fontWeight="600">
-                  {checkOutDay}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {checkOutTime}
-                </Typography> */}
               </Grid>
             </Grid>
           </Paper>

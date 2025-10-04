@@ -31,6 +31,7 @@ import { Login } from "@/pages";
 import { lowerCase } from "lodash";
 import { useRoomDetails } from "@/hooks/useRoomDetails";
 import RoomSpecs from "@/components/RoomSpecs";
+import { addDays } from "date-fns";
 
 export default function RoomDetails({ room: initialRoom }) {
   const theme = useTheme();
@@ -54,12 +55,27 @@ export default function RoomDetails({ room: initialRoom }) {
   } = useRoomDetails(initialRoom?.id);
 
   const onBookNow = () => {
+    setCheckIn(null);
+    setCheckOut(null);
     modal.openModal();
   };
 
   const onConfirmBooking = async () => {
     const success = await bookRoom();
-    if (success) modal.closeModal();
+    if (success) {
+      modal.closeModal();
+    }
+  };
+
+  // Add a handler to auto-set check-out date +1 day after check-in using date-fns
+  const handleCheckInChange = (date) => {
+    setCheckIn(date);
+    if (date) {
+      const nextDay = addDays(new Date(date), 1);
+      setCheckOut(nextDay);
+    } else {
+      setCheckOut(null);
+    }
   };
 
   useEffect(() => {
@@ -271,7 +287,7 @@ export default function RoomDetails({ room: initialRoom }) {
           modal={modal}
           checkIn={checkIn}
           checkOut={checkOut}
-          onCheckInChange={setCheckIn}
+          onCheckInChange={handleCheckInChange}
           onCheckOutChange={setCheckOut}
           onConfirmBooking={onConfirmBooking}
           notes={notes}

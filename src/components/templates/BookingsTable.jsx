@@ -12,7 +12,8 @@ export default function BookingsTable() {
   const pageSize = 10;
 
   const theme = useTheme();
-  const { bookings, loading, error, total } = useBookings(page, pageSize);
+  const { bookings, loading, error, total } = useBook
+  ings(page, pageSize);
 
   const columns = [
     // { field: "id", headerName: "ID", minWidth: 90 },

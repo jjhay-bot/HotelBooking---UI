@@ -17,6 +17,7 @@ import TravelExploreRoundedIcon from "@mui/icons-material/TravelExploreRounded";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { useRoomTypes } from "@/hooks/useRoomTypes";
 import RotateLeftIcon from "@mui/icons-material/RotateLeft";
+import { addDays } from "date-fns";
 
 export const FilterForm = ({ setFilters }) => {
   const setFiltersWithStatus = (filters) => {
@@ -83,6 +84,16 @@ export const FilterForm = ({ setFilters }) => {
     setCollapsed(false);
   };
 
+  const handleCheckInChange = (date) => {
+    setCheckIn(date);
+    if (date) {
+      const nextDay = addDays(new Date(date), 1);
+      setCheckOut(nextDay);
+    } else {
+      setCheckOut(null);
+    }
+  };
+
   return (
     <AnimatePresence mode="popLayout" s>
       {collapsed ? (
@@ -98,7 +109,7 @@ export const FilterForm = ({ setFilters }) => {
               <Grid container rowSpacing={1.5} columnSpacing={2}>
                 {/* ...existing grid content... */}
                 <Grid size={{ xs: 12, sm: 4, lg: 3 }}>
-                  <DatePick label="Check-in Date" value={checkIn} onChange={setCheckIn} />
+                  <DatePick label="Check-in Date" value={checkIn} onChange={handleCheckInChange} />
                 </Grid>
 
                 <Grid size={{ xs: 12, sm: 4, lg: 3 }}>
