@@ -48,3 +48,37 @@ Currently, two official plugins are available:
 ## Expanding the ESLint configuration
 
 If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+
+## Getting Started
+
+### Prerequisites
+- [Node.js](https://nodejs.org/) (v18 or newer recommended)
+- [pnpm](https://pnpm.io/) (install via `npm install -g pnpm`)
+
+### Install dependencies
+```sh
+pnpm install
+```
+
+### Run the development server
+```sh
+pnpm dev
+```
+
+### Build for production
+```sh
+pnpm build
+```
+
+### Run tests (if available)
+```sh
+pnpm test
+```
+
+## See Also
+- [Project Overview](./project-overview.md)
+- [Future Improvements & Security Progress](./future-improvements%20%5Bsecurity%5D/auth_cookie_migration.md)
+- [Input Sanitization & Validation](./future-improvements%20%5Bsecurity%5D/sanitation_validation.md)
+- [Authentication Usage](./future-improvements%20%5Bsecurity%5D/AUTH_USAGE.md)
+
+For more details, see the documentation above.
