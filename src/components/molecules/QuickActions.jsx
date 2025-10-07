@@ -49,6 +49,7 @@ export default function QuickActions() {
       name: "Logout",
       onClick: async () => {
         await logout();
+        navigate("/explore");
       },
       showIf: () => user?.role.match(/admin|user/gi)
     },
