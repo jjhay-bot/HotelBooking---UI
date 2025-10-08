@@ -18,6 +18,7 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { useRoomTypes } from "@/hooks/useRoomTypes";
 import RotateLeftIcon from "@mui/icons-material/RotateLeft";
 import { addDays } from "date-fns";
+import { onError } from "@/gql/uiActions";
 
 export const FilterForm = ({ setFilters }) => {
   const setFiltersWithStatus = (filters) => {
@@ -44,6 +45,10 @@ export const FilterForm = ({ setFilters }) => {
   };
 
   const handleSearch = () => {
+    if (checkIn && checkOut && checkOut <= checkIn) {
+      onError("Checkout date must be after checkin date");
+      return;
+    }
     if (
       minPrice !== null &&
       maxPrice !== null &&

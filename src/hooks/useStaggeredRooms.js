@@ -60,7 +60,6 @@ export function useStaggeredRooms({ filters = {}, pageSize = 6, staggerMs = 150 
   // Reset page and displayedRooms when filters change
   useEffect(() => {
     setPage(1);
-    setDisplayedRooms([]);
   }, [filters]);
 
   const hasMore = displayedRooms.length < total;
