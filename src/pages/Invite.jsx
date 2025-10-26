@@ -1,4 +1,3 @@
-
 import { useParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { rooms } from "../data/rooms";
@@ -34,11 +33,17 @@ export default function Invite() {
       <Helmet>
         <title>{pageTitle}</title>
         <meta name="description" content={pageDescription} />
+        
         {/* Open Graph / Facebook */}
-        <meta property="og:type" content="website" />
+        <meta property="og:type" content="product" />
+        <meta property="og:site_name" content="Bedder Deals" />
         <meta property="og:title" content={pageTitle} />
         <meta property="og:description" content={pageDescription} />
         <meta property="og:image" content={imageUrl} />
+        <meta property="product:price:amount" content={String(room.pricePerNight)} />
+        <meta property="product:price:currency" content="USD" />
+        <meta property="product:availability" content={room.status} />
+
         {/* Twitter */}
         <meta property="twitter:card" content="summary_large_image" />
         <meta property="twitter:title" content={pageTitle} />
