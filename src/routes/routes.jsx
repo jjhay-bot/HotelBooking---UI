@@ -1,8 +1,4 @@
-import {
-  Landing,
-  Login,
-  NotFound,
-} from "@pages";
+import { Landing, Login, NotFound } from "@pages";
 import { createBrowserRouter } from "react-router-dom";
 import { UiDemo } from "@ui/index";
 import Room from "@/pages/Room";
@@ -13,6 +9,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import SplashScreen from "@/components/SplashScreen";
 import UserRecords from "@/pages/UserRecords";
 import SecurityDemo from "@/demo/SecurityDemo";
+import Invite from "@/pages/Invite";
 
 const router = createBrowserRouter([
   // LANDING PAGE PER SERVICE
@@ -42,25 +39,41 @@ const router = createBrowserRouter([
   },
   {
     path: "/user/records",
-    element: <UserRecords />
+    element: <UserRecords />,
   },
   // ADMIN DASHBOARD ROUTES FOR TABBED NAVIGATION
   {
     path: "/admin/bookings",
-    element: <ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>,
+    element: (
+      <ProtectedRoute adminOnly>
+        <AdminDashboard />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/admin/users",
-    element: <ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>,
+    element: (
+      <ProtectedRoute adminOnly>
+        <AdminDashboard />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/admin/rooms",
-    element: <ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>,
+    element: (
+      <ProtectedRoute adminOnly>
+        <AdminDashboard />
+      </ProtectedRoute>
+    ),
   },
   // Optionally keep the old dashboard route for backward compatibility
   {
     path: "/admin/dashboard",
-    element: <ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>,
+    element: (
+      <ProtectedRoute adminOnly>
+        <AdminDashboard />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/test",
@@ -74,7 +87,11 @@ const router = createBrowserRouter([
   {
     path: "/demo/security",
     element: <SecurityDemo />,
-  }
+  },
+  {
+    path: "/invite/:roomId",
+    element: <Invite />,
+  },
 ]);
 
 export default router;

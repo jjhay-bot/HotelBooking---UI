@@ -10,31 +10,34 @@ import { Toaster } from "react-hot-toast";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { Notification } from "./components/atoms/Notification";
+import { HelmetProvider } from "react-helmet-async";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   // <React.StrictMode>
-  <ApolloProvider client={client}>
-    <SnackbarProvider
-      maxSnack={3}
-      anchorOrigin={{ vertical: "top", horizontal: "right" }}
-    >
-      <LocalizationProvider dateAdapter={AdapterDateFns}>
-        <AppThemeProvider>
-          <App />
-          <Spinner />
-          <Toaster
-            // position="top-right"
-            position="bottom-center"
-            toastOptions={{
-              duration: 3000,
-              style: { zIndex: 1401 },
-            }}
-            limit={3}
-          />
-          <Notification />
-        </AppThemeProvider>
-      </LocalizationProvider>
-    </SnackbarProvider>
-  </ApolloProvider>,
+  <HelmetProvider>
+    <ApolloProvider client={client}>
+      <SnackbarProvider
+        maxSnack={3}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <LocalizationProvider dateAdapter={AdapterDateFns}>
+          <AppThemeProvider>
+            <App />
+            <Spinner />
+            <Toaster
+              // position="top-right"
+              position="bottom-center"
+              toastOptions={{
+                duration: 3000,
+                style: { zIndex: 1401 },
+              }}
+              limit={3}
+            />
+            <Notification />
+          </AppThemeProvider>
+        </LocalizationProvider>
+      </SnackbarProvider>
+    </ApolloProvider>
+  </HelmetProvider>
   // </React.StrictMode>
 );
