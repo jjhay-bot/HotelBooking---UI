@@ -1,4 +1,4 @@
-import React from "react";
+
 import { useParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { rooms } from "../data/rooms";
@@ -26,7 +26,7 @@ export default function Invite() {
   }
 
   const pageTitle = `Invitation to Book: ${room.roomType}`;
-  const pageDescription = `${room.description} Capacity: ${room.capacity} people, Price: $${room.pricePerNight}/night.`;
+  const pageDescription = `✨ ${room.roomType} | 👥 ${room.capacity} people | 💰 $${room.pricePerNight}/night. ${room.description}`;
   const imageUrl = room.gallery[0].img;
 
   return (
